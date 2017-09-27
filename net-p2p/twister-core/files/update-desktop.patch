@@ -1,0 +1,13 @@
+--- Makefile.am	2015-01-13 11:50:32.958357667 +0300
++++ Makefile.am	2015-01-13 13:28:10.484544271 +0300
+@@ -206,10 +206,3 @@
+ 
+ desktopdir = $(datadir)/applications
+ desktop_DATA = share/applications/twister.desktop share/applications/twister-control.desktop
+-
+-UPDATE_DESKTOP = update-desktop-database $(datadir)/applications || :
+-
+-install-data-hook: 
+-	$(UPDATE_DESKTOP)
+-uninstall-hook: 
+-	$(UPDATE_DESKTOP)

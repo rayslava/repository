@@ -1,0 +1,75 @@
+#!/sbin/openrc-run
+# Copyright 1999-2014 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Id$
+
+run_dir=${run_dir:-/run/}
+command="/usr/bin/rdm"
+command_background="true"
+pidfile=${run_dir}/${SVCNAME}.pid
+user=${user:-rdm}
+group=${group:-rdm}
+start_stop_daemon_args="--user ${user} --group ${group} --background \
+	--make-pidfile --stdout ${logfile} --stderr ${logfile} \
+	--ionice ${ionice} --nicelevel ${nicelevel}"
+start_stop_daemon_stop_args="-R TERM/3/KILL/5"
+
+depend() {
+	use net
+}
+
+start_pre() {
+    checkpath -f "${logfile}" -o "${user}:${group}"
+    checkpath -f "${logfile}" -o "${user}:${group}"
+}
+
+PROG=smack-utils
+DESC="Simplified MAC Kernel (SMACK)"
+SMACKCTL=/usr/bin/smackctl
+
+# Check kernel whether smack is supported
+[ `grep -c smack /proc/filesystems` -eq 1 ] || exit 0
+
+#
+# Mount smackfs in /smack
+#
+mount_smack() {
+    if [ ! -d /smack ] ; then
+      test -e /smack && rm -f /smack
+      mkdir /smack
+    fi
+    if ! grep -E -qs smackfs /etc/mtab; then
+	mount -t smackfs smackfs /smack > /dev/null 2>&1
+    fi
+}
+
+case "$1" in
+   start)
+	echo -n "Starting $DESC ..."
+	mount_smack
+	/usr/bin/smackctl apply
+	echo " done."
+	;;
+   status)
+	if [ ! -e /smack/load2 ] ; then
+		exit -1
+	fi
+	;;
+   reload|force-reload|restart|try-restart)
+	echo -n "Reloading $DESC ..."
+	/usr/bin/smackctl clear
+	/usr/bin/smackctl apply
+	echo " done."
+	;;
+   stop)
+	echo -n "Stopping $DESC ..."
+	/usr/bin/smackctl clear
+	echo " done."
+	;;
+   *)
+	echo $"Usage: $0 {start|stop|reload|force-reload|restart|try-restart|status}"
+	exit 3
+	;;
+esac
+
+exit 0

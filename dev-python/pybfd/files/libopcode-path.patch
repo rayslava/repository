@@ -1,0 +1,14 @@
+diff --git a/setup.py b/setup.py
+index 1af6a57..ea18057 100755
+--- a/setup.py
++++ b/setup.py
+@@ -65,7 +65,8 @@ class CustomBuildExtension( build_ext ):
+     PLATFORMS = {
+         "linux": {
+             "libs": [
+-                "/usr/lib"
++                "/usr/lib",
++                "/usr/x86_64-pc-linux-gnu/lib/"
+             ],
+             "includes": [
+                 "/usr/include"

@@ -1,0 +1,15 @@
+#!/sbin/openrc-run
+# Copyright 1999-2014 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+# $Id$
+
+run_dir=${run_dir:-/run/}
+command="/usr/sbin/rasdaemon"
+command_background="true"
+pidfile=${run_dir}/${SVCNAME}.pid
+user=${user:-root}
+group=${group:-root}
+start_stop_daemon_args="--user ${user} --group ${group} --background \
+	--make-pidfile --ionice ${ionice} --nicelevel ${nicelevel} \
+	--pidfile ${pidfile}"
+start_stop_daemon_stop_args="-R TERM/3/KILL/5"

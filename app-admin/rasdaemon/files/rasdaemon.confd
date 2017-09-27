@@ -1,0 +1,8 @@
+# Available init script modifiers :
+# - user : the user used to run your mongodb instance (default : root)
+# - group : the group used to run your mongodb instance (default : root)
+# - run_dir : the run directory for your PID files (default : /run/)
+user="root"
+group="root"
+ionice=3
+nicelevel=15

@@ -1,0 +1,57 @@
+diff -ur a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt	2017-02-03 08:31:41.000000000 +0300
++++ b/CMakeLists.txt	2017-08-04 10:48:47.759966951 +0300
+@@ -1286,7 +1286,7 @@
+ # special DynamoRIOMap file included by DynamoRIOConfig.cmake for build dirs, and
+ # directly in the DynamoRIOTarget file for install dirs (where we can append easily).
+ # For the Map file, we need to start empty:
+-file(WRITE ${PROJECT_BINARY_DIR}/cmake/${exported_map_name}.cmake "")
++file(WRITE DESTINATION ${PROJECT_BINARY_DIR}/cmake/${exported_map_name}.cmake "")
+ set(exported_targets_append "")
+ macro(DR_export_target target)
+   export(TARGETS ${ARGV} FILE ${PROJECT_BINARY_DIR}/cmake/${exported_targets_name}.cmake
+@@ -1465,7 +1465,7 @@
+ # XXX: this should be a build-time rule as it depends on asm_defines.asm!
+ file(READ "${PROJECT_SOURCE_DIR}/core/arch/asm_defines.asm" str)
+ string(REPLACE "#include \"configure.h\"" "" str "${str}")
+-file(WRITE "${BUILD_CMAKE}/cpp2asm_defines.h" "${str}")
++file(WRITE DESTINATION "${BUILD_CMAKE}/cpp2asm_defines.h" "${str}")
+
+ # Export docs files just like full install, for using from build dir
+ # with projects that include DR sources.  Do this even if not BUILD_DOCS,
+@@ -1496,7 +1496,7 @@
+   string(REGEX REPLACE "(^|\n)##[^\n]*" "" subst "${subst}")
+   string(REGEX REPLACE "${inc}" "\n${subst}" contents "${contents}")
+ endforeach (inc)
+-file(WRITE ${public_config_file} "${contents}")
++file(WRITE DESTINATION ${public_config_file} "${contents}")
+
+ configure_file(
+   ${PROJECT_SOURCE_DIR}/make/DynamoRIOConfigVersion.cmake.in
+@@ -1527,7 +1527,7 @@
+ # we need to strip out the #include of configure.h
+ DR_install(CODE "file(READ \"\${PROJECT_SOURCE_DIR}/core/arch/asm_defines.asm\" str)
+   string(REPLACE \"#include \\\\\"configure.h\\\\\"\" \"\" str \"\\\${str}\")
+-  file(WRITE \"\\\${CMAKE_INSTALL_PREFIX}/\${INSTALL_CMAKE}/cpp2asm_defines.h\" \"\\\${str}\")")
++  file(WRITE DESTINATION \"\\\${CMAKE_INSTALL_PREFIX}/\${INSTALL_CMAKE}/cpp2asm_defines.h\" \"\\\${str}\")")
+
+ # export docs support, with consistent names
+ DR_install(FILES ${PROJECT_SOURCE_DIR}/api/docs/CMake_rundoxygen.cmake
+@@ -1546,7 +1546,7 @@
+     set(listname "list32")
+   endif ()
+   if (NOT DEBUG) # avoid duplicates for release + debug
+-    DR_install(CODE "file(APPEND \"\\\${CMAKE_INSTALL_PREFIX}/tools/${listname}\" \"${name}\\n\"\n)")
++    DR_install(CODE "file(APPEND DESTINATION \"\\\${CMAKE_INSTALL_PREFIX}/tools/${listname}\" \"${name}\\n\"\n)")
+   endif ()
+ endfunction ()
+
+@@ -1825,7 +1825,7 @@
+ # We must append to this file to avoid cmake_install.cmake's diff from thinking
+ # the exports have changed and thus clobbering the other config's files.
+ # This is what is copied to ${CMAKE_INSTALL_PREFIX}/${INSTALL_CMAKE}.
+-DR_target_install(CODE "file(APPEND \"${PROJECT_BINARY_DIR}/CMakeFiles/Export/cmake/${exported_targets_name}.cmake\" \"${exported_targets_append}\")")
++DR_target_install(CODE "file(APPEND DESTINATION \"${PROJECT_BINARY_DIR}/CMakeFiles/Export/cmake/${exported_targets_name}.cmake\" \"${exported_targets_append}\")")
+ # Create the exported targets file.  This will include all targets added
+ # in subdirectories via DR_install(TARGETS ... EXPORT ${exported_targets_name}).
+ DR_target_install_dst(${INSTALL_CMAKE} EXPORT ${exported_targets_name})

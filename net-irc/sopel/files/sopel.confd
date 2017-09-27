@@ -1,0 +1,9 @@
+# Available init script modifiers :
+# - user : the user used to run your sopel instance (default : sopel)
+# - group : the group used to run your sopel instance (default : sopel)
+# - run_dir : the run directory for your PID files (default : /run/)
+user="sopel"
+group="sopel"
+logfile="/var/log/sopel.log"
+ionice=3
+nicelevel=15

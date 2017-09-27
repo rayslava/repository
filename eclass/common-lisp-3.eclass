@@ -1,0 +1,1 @@
+/var/lib/layman/lisp/eclass/common-lisp-3.eclass
