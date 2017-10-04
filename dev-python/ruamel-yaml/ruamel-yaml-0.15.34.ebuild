@@ -16,7 +16,8 @@ KEYWORDS="amd64"
 IUSE=""
 SLOT="0"
 
-DEPEND="dev-python/setuptools"
+DEPEND="dev-python/setuptools
+dev-python/pip"
 
 src_unpack() {
 	default
