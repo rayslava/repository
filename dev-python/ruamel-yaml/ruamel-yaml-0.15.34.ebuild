@@ -26,5 +26,5 @@ src_unpack() {
 }
 
 src_install() {
-	pip3 install --root=${D} .
+	pip3 install --install-option="--prefix=${D}" .
 }
