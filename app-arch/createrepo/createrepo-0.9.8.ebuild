@@ -6,7 +6,7 @@ PYTHON_DEPEND="2:2.7"
 PYTHON_COMPAT=( python2_7 )
 PYTHON_USE_WITH="xml"
 
-inherit python-r1 eutils git-r3
+inherit python-any-r1 eutils git-r3
 
 DESCRIPTION="Tizen version of tool which creates a common metadata repository"
 HOMEPAGE="http://createrepo.baseurl.org/"
@@ -26,8 +26,7 @@ RDEPEND=">=dev-python/urlgrabber-2.9.0
 	>=sys-apps/yum-3.4.3"
 
 pkg_setup() {
-	python_set_active_version 2
-	python_pkg_setup
+	python-any-r1_pkg_setup
 }
 
 S="${WORKDIR}/${PN}-${PV}"
