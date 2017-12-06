@@ -67,6 +67,7 @@ src_configure() {
 
 src_compile() {
 	default
+	cmake-utils_src_compile
 	if $(use static-libs) ; then
 		cd ${WORKDIR}/${P}_static_build
 		cmake-utils_src_compile
@@ -74,6 +75,7 @@ src_compile() {
 }
 
 src_install() {
+	default
 	cmake-utils_src_install
 	if $(use static-libs) ; then
 		cd ${WORKDIR}/${P}_static_build
