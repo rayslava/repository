@@ -49,12 +49,12 @@ src_configure() {
 		-DBSONCXX_POLY_USE_MNMLSTC=OFF
 		-DBSONCXX_POLY_USE_STD_EXPERIMENTAL=ON
 		-DCMAKE_CXX_STANDARD=14
-		)
+	)
 
 	cmake-utils_src_configure
 
 	if $(use static-libs) ; then
-		mkdir ${WORKDIR}/${P}_static_build && cd ${WORKDIR}/${P}_static_build
+		mkdir ${WORKDIR}/${P}_static_build && pushd ${WORKDIR}/${P}_static_build
 		local mycmakeargs=(
 			-DBSONCXX_POLY_USE_MNMLSTC=OFF
 			-DBSONCXX_POLY_USE_STD_EXPERIMENTAL=ON
@@ -62,6 +62,7 @@ src_configure() {
 			-DBUILD_SHARED_LIBS=OFF
 		)
 		cmake-utils_src_configure
+		popd
 	fi
 }
 
@@ -69,8 +70,9 @@ src_compile() {
 	default
 	cmake-utils_src_compile
 	if $(use static-libs) ; then
-		cd ${WORKDIR}/${P}_static_build
+		pushd ${WORKDIR}/${P}_static_build
 		cmake-utils_src_compile
+		popd
 	fi
 }
 
@@ -78,7 +80,8 @@ src_install() {
 	default
 	cmake-utils_src_install
 	if $(use static-libs) ; then
-		cd ${WORKDIR}/${P}_static_build
+		pushd ${WORKDIR}/${P}_static_build
 		cmake-utils_src_install
+		popd
 	fi
 }
