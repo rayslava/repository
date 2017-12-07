@@ -2,9 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="5"
-PYTHON_DEPEND="2:2.7"
 PYTHON_COMPAT=( python2_7 )
-PYTHON_USE_WITH="xml"
+PYTHON_REQ_USE="xml(+)"
 
 inherit python-any-r1 eutils git-r3
 
@@ -42,5 +41,5 @@ src_compile() { :; }
 src_install() {
 	emake install DESTDIR="${D}"
 	dodoc ChangeLog README
-	python_convert_shebangs -r 2 "${ED}"
+	python_fix_shebang "${ED}"
 }
