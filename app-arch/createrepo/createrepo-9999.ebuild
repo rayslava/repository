@@ -2,11 +2,10 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="5"
-PYTHON_DEPEND="2:2.7"
 PYTHON_COMPAT=( python2_7 )
-PYTHON_USE_WITH="xml"
+PYTHON_REQ_USE="xml(+)"
 
-inherit python-r1 eutils git-r3
+inherit python-any-r1 eutils git-r3
 
 DESCRIPTION="Tizen version of tool which creates a common metadata repository"
 HOMEPAGE="http://createrepo.baseurl.org/"
@@ -14,7 +13,7 @@ EGIT_REPO_URI="http://createrepo.baseurl.org/git/createrepo.git"
 
 LICENSE="GPL-2"
 SLOT="0"
-KEYWORDS="~amd64 ~x86"
+KEYWORDS=""
 IUSE=""
 
 RDEPEND=">=dev-python/urlgrabber-2.9.0
@@ -25,8 +24,7 @@ RDEPEND=">=dev-python/urlgrabber-2.9.0
 	>=sys-apps/yum-3.4.3"
 
 pkg_setup() {
-	python_set_active_version 2
-	python_pkg_setup
+	python-any-r1_pkg_setup
 }
 
 S="${WORKDIR}/${PN}-${PV}"
@@ -42,5 +40,5 @@ src_compile() { :; }
 src_install() {
 	emake install DESTDIR="${D}"
 	dodoc ChangeLog README
-	python_convert_shebangs -r 2 "${ED}"
+	python_fix_shebang "${ED}"
 }
