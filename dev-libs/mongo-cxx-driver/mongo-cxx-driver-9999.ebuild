@@ -39,6 +39,7 @@ DOCS=( README.md )
 
 src_prepare() {
 	default
+	cmake-utils_src_prepare
 	sed -e '/(examples)/s/add_subdirectory(examples)/# no examples needed/' -i ${S}/CMakeLists.txt
 	sed -e '/enable_testing()/d' -i ${S}/CMakeLists.txt
 	echo -e "\n#if defined(MONGOCXX_TESTING)\n#include <cassert>\n#endif" >> ${S}/src/mongocxx/config/prelude.hpp
