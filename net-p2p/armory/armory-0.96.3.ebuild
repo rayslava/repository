@@ -1,16 +1,19 @@
-# Copyright 1999-2012 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
 
-EAPI=4
+EAPI=6
 
-inherit git-2
+inherit git-2 eutils
 
 DESCRIPTION="Armory is an advanced Bitcoin client"
 HOMEPAGE="http://bitcoinarmory.com/"
 
-EGIT_REPO_URI="git://github.com/etotheipi/BitcoinArmory.git"
-EGIT_BRANCH="testing"
+if [[ ${PV} == "9999" ]]; then
+	EGIT_REPO_URI="git://github.com/goatpig/BitcoinArmory.git"
+	inherit git-r3
+else
+	SRC_URI="https://github.com/goatpig/BitcoinArmory/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+fi
 
 LICENSE="AGPL-3"
 SLOT="0"
@@ -23,8 +26,12 @@ DEPEND="dev-python/PyQt4
 	dev-python/twisted-web
 	x11-misc/xdg-utils"
 
+#src_prepare() {
+	#epatch "${FILESDIR}/build_detect_platform-02.patch"
+#}
+
 src_install() {
-	CFLAGS="-O3 -g -march=native -mtune=native" LDLIBS="-lsnappy" emake DESTDIR="${D}" install
+	emake DESTDIR="${D}" install
 }
 
 pkg_postinst() {
