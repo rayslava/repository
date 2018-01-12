@@ -3,32 +3,29 @@
 
 EAPI=6
 
-inherit git-2 eutils
+inherit eutils
 
 DESCRIPTION="Armory is an advanced Bitcoin client"
 HOMEPAGE="http://bitcoinarmory.com/"
 
 if [[ ${PV} == "9999" ]]; then
-	EGIT_REPO_URI="git://github.com/goatpig/BitcoinArmory.git"
+	EGIT_REPO_URI="git://github.com/goatpig/${PN}.git"
 	inherit git-r3
+	KEYWORDS=""
 else
-	SRC_URI="https://github.com/goatpig/BitcoinArmory/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+	SRC_URI="https://github.com/goatpig/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
+	KEYWORDS="~amd64"
 fi
 
 LICENSE="AGPL-3"
 SLOT="0"
-KEYWORDS=""
 
 RDEPEND="net-p2p/bitcoin-qt"
 
 DEPEND="dev-python/PyQt4
 	dev-lang/swig
-	dev-python/twisted-web
+	dev-python/twisted
 	x11-misc/xdg-utils"
-
-#src_prepare() {
-	#epatch "${FILESDIR}/build_detect_platform-02.patch"
-#}
 
 src_install() {
 	emake DESTDIR="${D}" install
