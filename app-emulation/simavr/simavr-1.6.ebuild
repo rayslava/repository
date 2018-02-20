@@ -27,10 +27,17 @@ virtual/libelf
 >=media-libs/freeglut-3.0.0"
 RDEPEND="${DEPEND}"
 
+src_prepare() {
+	default
+	sed -e '/^install/s/all$//' -i simavr/Makefile
+	sed -e '/$(DESTDIR)\/lib$/s#$#/#' -i simavr/Makefile
+	sed -e "s#/lib/#/$(get_libdir)/#" -i simavr/Makefile
+}
+
 src_compile() {
 	emake RELEASE=1
 }
 
 src_install() {
-	emake INSTALL DESTDIR=${D}
+	emake install DESTDIR=${D}/usr
 }
