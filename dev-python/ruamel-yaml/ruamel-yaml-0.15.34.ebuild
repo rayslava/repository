@@ -1,30 +1,44 @@
-# Copyright 2011-2017 W-Mark Kubacki
-# Distributed under the terms of the OSI Reciprocal Public License
+# Copyright 1999-2018 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
-PYTHON_COMPAT=( python3_4 python3_5 python3_6 )
 
-inherit distutils-r1 eutils
+PYTHON_COMPAT=( python3_{4,5,6} )
 
-DESCRIPTION="YAML 1.2 loader/dumper package for Python."
-HOMEPAGE="https://bitbucket.org/ruamel/yaml"
-SRC_URI="https://bitbucket.org/ruamel/yaml/get/${PV}.tar.gz -> python-${P}.tar.gz"
-RESTRICT="primaryuri"
+inherit distutils-r1 vcs-snapshot
+
+DESCRIPTION="YAML parser/emitter that supports roundtrip comment preservation"
+HOMEPAGE="https://pypi.python.org/pypi/ruamel.yaml https://bitbucket.org/ruamel/yaml"
+MY_PN="${PN//-/.}"
+SRC_URI="https://bitbucket.org/${MY_PN/.//}/get/${PV}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="MIT"
-KEYWORDS="amd64"
-IUSE=""
 SLOT="0"
+KEYWORDS="~amd64"
+IUSE="test"
 
-DEPEND="dev-python/setuptools
-dev-python/pip"
+RDEPEND="
+	${PYTHON_DEPS}
+"
+DEPEND="
+	${RDEPEND}
+	dev-python/setuptools[${PYTHON_USEDEP}]
+	test? (
+		dev-python/flake8[${PYTHON_USEDEP}]
+		dev-python/pytest[${PYTHON_USEDEP}]
+		dev-python/ruamel-std-pathlib[${PYTHON_USEDEP}]
+	)
+"
 
-src_unpack() {
-	default
-	cd ${WORKDIR}
-	mv ${PN}* ${P}
+python_install() {
+	distutils-r1_python_install --single-version-externally-managed
+	find "${ED}" -name '*.pth' -delete || die
 }
 
-src_install() {
-	pip3 install --install-option="--prefix=${D}" .
+python_test() {
+	# This file produced by setup.py breaks finding system-wide installed
+	# ruamel.std.pathlib due to shared namespace
+	rm "${BUILD_DIR}/lib/ruamel/__init__.py" || die
+
+	py.test -v _test/test_*.py || die
 }
