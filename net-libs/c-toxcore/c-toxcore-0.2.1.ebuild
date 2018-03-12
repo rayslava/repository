@@ -1,15 +1,21 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2017 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=6
 
-inherit autotools systemd user vcs-snapshot
+GH_USER="TokTok"
+GH_REPO="c-toxcore"
+
+if [[ ${PV} != "9999" ]]; then
+	GH_TAG="v${PV}"
+else
+	GH_BUILD_TYPE="live"
+fi
+
+inherit autotools systemd user vcs-snapshot eutils github
 
 DESCRIPTION="Encrypted P2P, messaging, and audio/video calling platform"
 HOMEPAGE="https://tox.chat"
-EGIT_COMMIT="404042cc2db5a7e45ebcd0149b8298e54075463a"
-SRC_URI="https://github.com/TokTok/c-toxcore/archive/${EGIT_COMMIT}.tar.gz -> ${P}.tar.gz"
 
 LICENSE="GPL-3+"
 SLOT="0"
