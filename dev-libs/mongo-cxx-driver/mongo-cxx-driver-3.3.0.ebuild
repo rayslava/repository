@@ -10,7 +10,7 @@ GH_REPO="${PN}"
 RESTRICT="primaryuri"
 
 if [[ ${PV} != "9999" ]]; then
-	GH_TAG="${PV}"
+	GH_TAG="r${PV}"
 	KEYWORDS="~amd64 ~x86"
 else
 	GH_BUILD_TYPE="live"
@@ -26,7 +26,7 @@ IUSE="debug sasl ssl static-libs"
 RDEPEND=">=dev-libs/boost-1.50[threads(+)]
 	sasl? ( dev-libs/cyrus-sasl )
 	ssl? ( dev-libs/openssl:= )
-	<dev-libs/mongo-c-driver-1.11.0[static-libs?]
+	>=dev-libs/mongo-c-driver-1.10.0[static-libs?]
 	app-arch/snappy[static-libs?]"
 
 DEPEND="${RDEPEND}

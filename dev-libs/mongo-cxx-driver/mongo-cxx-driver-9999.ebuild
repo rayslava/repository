@@ -10,7 +10,7 @@ GH_REPO="${PN}"
 RESTRICT="primaryuri"
 
 if [[ ${PV} != "9999" ]]; then
-	GH_TAG="${PV}"
+	GH_TAG="r${PV}"
 	KEYWORDS="~amd64 ~x86"
 else
 	GH_BUILD_TYPE="live"
