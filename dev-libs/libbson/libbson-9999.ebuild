@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2018 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -11,15 +11,16 @@ GH_REPO="${PN}"
 
 if [[ ${PV} != "9999" ]]; then
 	GH_TAG="${PV}"
+	KEYWORDS="~amd64 ~hppa ~x86"
 else
 	GH_BUILD_TYPE="live"
+	KEYWORDS=""
 fi
 
 inherit autotools github
-
 LICENSE="BSD"
 SLOT="0"
-KEYWORDS="~amd64 ~hppa ~x86"
+
 IUSE="debug examples static-libs"
 
 DOCS=( AUTHORS NEWS README )
