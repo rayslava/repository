@@ -82,8 +82,6 @@ src_install() {
 	default
 	cmake-utils_src_install
 	if $(use static-libs) ; then
-		pushd ${WORKDIR}/${P}_static_build
-		cmake-utils_src_install
-		popd
+		BUILD_DIR=${WORKDIR}/${P}_static_build cmake-utils_src_install
 	fi
 }
