@@ -40,4 +40,33 @@ multilib_src_configure() {
 		-DENABLE_TESTS=$(usex test)
 	)
 	cmake-utils_src_configure
+
+	if $(use static-libs) ; then
+		mkdir ${WORKDIR}/${P}_static_build
+		local mycmakeargs=(
+			-DCMAKE_LIBRARY_PATH=/usr/$(get_libdir)
+			-DENABLE_SSL=$(usex ssl AUTO OFF)
+			-DENABLE_SASL=$(usex sasl AUTO OFF)
+			-DENABLE_STATIC=$(usex static-libs)
+			-DENABLE_EXAMPLES=$(usex examples)
+			-DENABLE_TESTS=$(usex test)
+		)
+		BUILD_DIR=${WORKDIR}/${P}_static_build cmake-utils_src_configure
+	fi
+}
+
+src_compile() {
+	default
+	cmake-utils_src_compile
+	if $(use static-libs) ; then
+		BUILD_DIR=${WORKDIR}/${P}_static_build cmake-utils_src_compile
+	fi
+}
+
+src_install() {
+	default
+	cmake-utils_src_install
+	if $(use static-libs) ; then
+		BUILD_DIR=${WORKDIR}/${P}_static_build cmake-utils_src_install
+	fi
 }
