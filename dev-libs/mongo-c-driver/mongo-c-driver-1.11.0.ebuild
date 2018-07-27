@@ -50,6 +50,7 @@ multilib_src_configure() {
 			-DENABLE_STATIC=$(usex static-libs)
 			-DENABLE_EXAMPLES=$(usex examples)
 			-DENABLE_TESTS=$(usex test)
+			-DENABLE_STATIC=ON
 		)
 		BUILD_DIR=${WORKDIR}/${P}_static_build cmake-utils_src_configure
 	fi
