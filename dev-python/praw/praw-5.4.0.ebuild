@@ -8,7 +8,9 @@ inherit distutils-r1 eutils
 
 DESCRIPTION="Python Reddit API Wrapper"
 HOMEPAGE="https://github.com/praw-dev/praw"
-SRC_URI="mirror://pypi/${P:0:1}/${PN}/${P}.zip -> python-${P}.zip"
+SRC_URI="mirror://pypi/${P:0:1}/${PN}/${P}.zip -> python-${P}.zip
+https://github.com/praw-dev/praw/archive/v${PV}.zip -> python-${P}.zip
+"
 RESTRICT="primaryuri"
 
 LICENSE="MIT"
