@@ -1,7 +1,7 @@
 # Copyright 2017 Slava Barinov
 
 EAPI=6
-PYTHON_COMPAT=( python3_4 python3_5 python3_6 )
+PYTHON_COMPAT=( python3_5 python3_6 python3_7 )
 
 GH_USER="witten"
 GH_REPO="borgmatic"
@@ -24,10 +24,5 @@ SLOT="0"
 
 DEPEND="app-backup/borgbackup
 dev-python/setuptools
-<=dev-python/ruamel-yaml-0.15.34
+<dev-python/ruamel-yaml-0.16.0
 >=dev-python/pykwalify-1.6.0"
-
-src_unpack() {
-	default
-	sed -e '/ruamel.yaml/s/0.15/0.15.34/' -i ${S}/setup.py
-}
