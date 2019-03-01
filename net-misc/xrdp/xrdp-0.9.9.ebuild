@@ -1,6 +1,5 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Id$
 
 EAPI=5
 
@@ -17,7 +16,7 @@ RESTRICT="mirror"
 IUSE="debug fuse kerberos jpeg -neutrinordp pam +pulseaudio systemd -xrdpvr"
 
 RDEPEND="dev-libs/openssl:0=
-	media-sound/pulseaudio:0=
+	pulseaudio? ( media-sound/pulseaudio:0= )
 	x11-libs/libX11:0=
 	x11-libs/libXfixes:0=
 	x11-libs/libXrandr:0=
