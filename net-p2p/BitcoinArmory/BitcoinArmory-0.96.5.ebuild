@@ -3,7 +3,7 @@
 
 EAPI=6
 
-inherit eutils
+inherit eutils autotools
 
 DESCRIPTION="Armory is an advanced Bitcoin client"
 HOMEPAGE="http://bitcoinarmory.com/"
@@ -27,9 +27,11 @@ DEPEND="dev-python/PyQt4
 	dev-python/twisted
 	x11-misc/xdg-utils"
 
-src_install() {
-	emake DESTDIR="${D}" install
+src_prepare() {
+	default
+	./autogen.sh
 }
+
 
 pkg_postinst() {
 	xdg-icon-resource install --novendor --context apps --size 64 /usr/share/armory/img/armory_icon_64x64.png armoryicon
