@@ -26,3 +26,10 @@ DEPEND="dev-libs/openssl
 sys-libs/zlib
 dev-util/gperf
 "
+
+src_install() {
+	cmake-utils_src_install
+
+	# Do not violate multilib strict
+	mv "${ED}/usr/lib" "${ED}/usr/$(get_libdir)" || die "mv failed"
+}
