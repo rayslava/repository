@@ -1,4 +1,4 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=6
@@ -27,7 +27,7 @@ RDEPEND=">=dev-libs/boost-1.50[threads(+)]
 	sasl? ( dev-libs/cyrus-sasl )
 	ssl? ( dev-libs/openssl:= )
 	>=dev-libs/mongo-c-driver-1.10.0[static-libs?]
-	app-arch/snappy[static-libs?]"
+	app-arch/snappy"
 
 DEPEND="${RDEPEND}
 >=sys-devel/gcc-5"
