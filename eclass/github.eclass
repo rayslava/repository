@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: github.eclass
@@ -12,6 +12,8 @@ if [[ -z ${_GH_ECLASS} ]]; then
 _GH_ECLASS=1
 
 case "${EAPI:-0}" in
+	7)
+		;;
 	6)
 		;;
 	5)
