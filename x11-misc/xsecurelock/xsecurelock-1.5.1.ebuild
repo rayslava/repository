@@ -37,9 +37,5 @@ RDEPEND="${DEPEND}"
 
 src_prepare() {
    default
-   eautoreconf
-}
-
-src_configure() {
-	econf --with-pam-service-name=xscreensaver
+   eautoreconf --with-pam-service-name=xscreensaver
 }
