@@ -1,8 +1,7 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
 
-EAPI="5"
+EAPI=7
 
 inherit git-r3 qmake-utils
 
@@ -36,9 +35,9 @@ src_compile() {
 src_install() {
 	cd "${S}/src"
 	emake install INSTALL_ROOT=${D}
-    exeinto /opt/${PN}
-    	doexe ${FILESDIR}/${PN}
-    dosym ../../opt/${PN}/${PN} /usr/bin/${PN}
-    insinto /opt/${PN}/
-    	doins -r ${S}/src/{app,README.md} || die "install failed"
+	exeinto /opt/${PN}
+		doexe ${FILESDIR}/${PN}
+	dosym ../../opt/${PN}/${PN} /usr/bin/${PN}
+	insinto /opt/${PN}/
+		doins -r ${S}/src/{app,README.md} || die "install failed"
 }
