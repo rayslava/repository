@@ -31,7 +31,8 @@ RDEPEND=">=dev-python/urlgrabber-2.9.0
 	>=app-arch/rpm-4.1.1[python]
 	dev-libs/libxml2[python]
 	>=app-arch/deltarpm-3.6_pre20110223[python]
-	dev-python/pyliblzma"
+	dev-python/pyliblzma
+	sys-apps/yum"
 
 S="${WORKDIR}/${PN}-${PV}"
 
