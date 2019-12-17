@@ -47,6 +47,7 @@ src_compile() { :; }
 
 src_install() {
 	default
+	python_setup
 	emake install DESTDIR="${D}"
 	dodoc ChangeLog README
 	python_fix_shebang "${ED}"
