@@ -33,10 +33,6 @@ RDEPEND=">=dev-python/urlgrabber-2.9.0
 	>=app-arch/deltarpm-3.6_pre20110223[python]
 	dev-python/pyliblzma"
 
-pkg_setup() {
-	python-any-r1_pkg_setup
-}
-
 S="${WORKDIR}/${PN}-${PV}"
 
 src_prepare() {
