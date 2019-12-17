@@ -39,12 +39,14 @@ src_prepare() {
 	default
 	cd ${S}
 	find -name Makefile -exec \
-		sed -e '/^sysconfdir/s:=.*/:=/:' -i {} \; || die
+		 sed -e '/^sysconfdir/s:=.*/:=/:' -i {} \; || die
+	emake
 }
 
 src_compile() { :; }
 
 src_install() {
+	default
 	emake install DESTDIR="${D}"
 	dodoc ChangeLog README
 	python_fix_shebang "${ED}"
