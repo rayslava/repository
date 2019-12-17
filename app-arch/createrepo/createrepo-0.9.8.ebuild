@@ -1,7 +1,7 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2019 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI="5"
+EAPI="6"
 PYTHON_COMPAT=( python2_7 )
 PYTHON_REQ_USE="xml(+)"
 
@@ -21,8 +21,7 @@ RDEPEND=">=dev-python/urlgrabber-2.9.0
 	>=app-arch/rpm-4.1.1[python]
 	dev-libs/libxml2[python]
 	>=app-arch/deltarpm-3.6_pre20110223[python]
-	dev-python/pyliblzma
-	>=sys-apps/yum-3.4.3"
+	dev-python/pyliblzma"
 
 pkg_setup() {
 	python-any-r1_pkg_setup
