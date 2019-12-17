@@ -12,7 +12,7 @@ GH_REPO="${PN}"
 MY_PV=$(replace_all_version_separators -)
 
 if [[ ${PV} != "9999" ]]; then
-	GH_TAG="${PN}-${PV}"
+	GH_TAG="${PN}-${MY_PV}"
 else
 	GH_BUILD_TYPE="live"
 fi
@@ -40,6 +40,7 @@ pkg_setup() {
 S="${WORKDIR}/${PN}-${PV}"
 
 src_prepare() {
+	default
 	cd ${S}
 	find -name Makefile -exec \
 		sed -e '/^sysconfdir/s:=.*/:=/:' -i {} \; || die

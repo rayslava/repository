@@ -40,6 +40,7 @@ pkg_setup() {
 S="${WORKDIR}/${PN}-${PV}"
 
 src_prepare() {
+	default
 	cd ${S}
 	find -name Makefile -exec \
 		sed -e '/^sysconfdir/s:=.*/:=/:' -i {} \; || die
