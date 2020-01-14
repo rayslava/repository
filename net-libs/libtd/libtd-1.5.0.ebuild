@@ -13,7 +13,7 @@ else
 	KEYWORDS=""
 fi
 
-inherit github cmake-utils
+inherit github multilib cmake-utils
 
 DESCRIPTION="Cross-platform library for building Telegram clients https://core.telegram.org/tdlib"
 HOMEPAGE="https://github.com/tdlib/td"
