@@ -13,7 +13,7 @@ else
 	KEYWORDS=""
 fi
 
-inherit github multilib cmake-utils
+inherit github cmake-utils
 
 DESCRIPTION="Cross-platform library for building Telegram clients https://core.telegram.org/tdlib"
 HOMEPAGE="https://github.com/tdlib/td"
@@ -26,3 +26,7 @@ DEPEND="dev-libs/openssl
 sys-libs/zlib
 dev-util/gperf
 "
+
+src_install() {
+		emake DESTDIR="${D}" PREFIX="/usr" LIBDIR="$(get_libdir)" install
+}
