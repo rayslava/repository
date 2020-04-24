@@ -19,7 +19,7 @@ KEYWORDS="amd64 x86 ~x64-macos"
 IUSE="test"
 RESTRICT="!test? ( test )"
 
-RDEPEND="dev-python/httplib2[${PYTHON_USEDEP}]"
+RDEPEND=""
 DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
 
 S="${WORKDIR}/${MY_P}"
