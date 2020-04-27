@@ -15,24 +15,5 @@ fi
 
 DEPEND=""
 RDEPEND="${DEPEND}
-	dev-vcs/bzr
-	dev-vcs/git
-	dev-vcs/mercurial
-	dev-vcs/subversion
+		net-misc/wget
 "
-
-src_unpack() {
-	default
-}
-
-src_install() {
-	# different folder and files in this module
-	exeinto /usr/libexec/obs/service
-	doexe ${OBS_SERVICE_NAME}
-
-	insinto /usr/libexec/obs/service
-	doins ${OBS_SERVICE_NAME}.service
-
-	insinto /etc/obs/services
-	newins ${OBS_SERVICE_NAME}.rc ${OBS_SERVICE_NAME}
-}
