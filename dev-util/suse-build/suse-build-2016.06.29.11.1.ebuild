@@ -5,12 +5,13 @@
 EAPI=6
 inherit eutils versionator rpm
 
-MAJOR_PV="$(get_version_component_range 1)"
-BUILD_PV="$(get_version_component_range 2)"
-UPDATE_PV="$(get_version_component_range 3)"
+MAJOR_PV="$(get_version_component_range 1-3)"
+BUILD_PV="$(get_version_component_range 4)"
+UPDATE_PV="$(get_version_component_range 5)"
+MAJOR_URL="${MAJOR_PV//./}"
 DESCRIPTION="SUSE build package for gbs"
 HOMEPAGE="http://developer.tizen.org"
-SRC_URI="http://download.tizen.org/tools/latest-release/openSUSE_42.3/src/build-${MAJOR_PV}-${BUILD_PV}.${UPDATE_PV}.src.rpm"
+SRC_URI="http://download.tizen.org/tools/latest-release/openSUSE_42.3/src/build-${MAJOR_URL}-${BUILD_PV}.${UPDATE_PV}.src.rpm"
 RESTRICT="primaryuri"
 
 LICENSE="GPL-2"
