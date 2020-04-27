@@ -3,8 +3,6 @@
 
 EAPI=7
 
-EGIT_REPO_URI="https://github.com/openSUSE/${PN}.git"
-
 PYTHON_COMPAT=( python2_7 python3_{7,8} )
 PYTHON_REQ_USE="xml"
 
