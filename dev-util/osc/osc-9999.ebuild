@@ -39,7 +39,6 @@ PDEPEND="${DEPEND}
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
 
 src_prepare() {
-	eapply "${FILESDIR}"/${PN}-0.139.2-out-of-tree-build.patch
 	distutils-r1_src_prepare
 }
 
