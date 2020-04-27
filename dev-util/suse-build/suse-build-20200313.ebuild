@@ -20,7 +20,7 @@ HOMEPAGE="https://build.opensuse.org/package/show/openSUSE:Tools/build"
 
 LICENSE="GPL-2"
 SLOT="0"
-IUSE=""
+IUSE="symlink"
 
 RDEPEND="
 	virtual/perl-Digest-MD5
@@ -50,5 +50,5 @@ src_install() {
 	find . -type f -exec sed -i 's|/usr/lib/build|/usr/libexec/suse-build|' {} +
 
 	# create symlink for default build config
-	dosym /usr/libexec/suse-build/configs/sl42.1.conf /usr/libexec/suse-build/configs/default.conf
+	dosym /usr/libexec/suse-build/configs/sl42.2.conf /usr/libexec/suse-build/configs/default.conf
 }
