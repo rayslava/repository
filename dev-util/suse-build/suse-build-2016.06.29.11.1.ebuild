@@ -35,5 +35,5 @@ src_unpack () {
 	find . -type f -exec sed -i 's|/usr/bin/build|/usr/bin/suse-build|g'     {} +
 	find . -type f -exec sed -i 's|/usr/lib/build|/usr/libexec/suse-build|g' {} +
 	find . -type f -exec sed -i 's|/usr/lib/obs|/usr/libexec/obs|g'          {} +
-
+	find . -name Makefile -exec sed -i '/BUILD=/s/build/suse-build/;/libdir=/s|/lib|/libexec|' {} +
 }
