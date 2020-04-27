@@ -1,0 +1,31 @@
+--- a/Makefile	2020-04-27 13:21:36.981518085 +0300
++++ b/Makefile	2020-04-27 13:21:06.396516007 +0300
+@@ -1,7 +1,7 @@
+ VERSION=0.1
+ SCM=$(shell if test -d .svn; then echo svn; elif test -d .git; then echo git; fi)
+ DATE=$(shell date +%Y%m%d%H%M)
+-BUILD=build
++BUILD=suse-build
+
+ INITVM_ARCH=$(shell bash -c '. common_functions ; build_host_arch; echo $$BUILD_INITVM_ARCH')
+
+@@ -12,7 +12,7 @@
+ prefix=/usr
+ bindir=$(prefix)/bin
+ datadir=$(prefix)/share
+-libdir=$(prefix)/lib
++libdir=$(prefix)/libexec
+ pkglibdir=$(libdir)/$(BUILD)
+ mandir=$(datadir)/man
+ man1dir=$(mandir)/man1
+@@ -75,8 +75,8 @@
+ 	install -m644 build.1 $(DESTDIR)$(man1dir)
+ 	install -m644 vc.1 $(DESTDIR)$(man1dir)
+ 	install -m644 unrpm.1 $(DESTDIR)$(man1dir)
+-	ln -sf $(pkglibdir)/build $(DESTDIR)$(bindir)/build
+-	ln -sf $(pkglibdir)/vc    $(DESTDIR)$(bindir)/buildvc
++	ln -sf $(pkglibdir)/build $(DESTDIR)$(bindir)/suse-build
++	ln -sf $(pkglibdir)/vc    $(DESTDIR)$(bindir)/suse-buildvc
+ 	ln -sf $(pkglibdir)/unrpm $(DESTDIR)$(bindir)/unrpm
+
+ # Allow initvm to be packaged seperately from the rest of build.  This
