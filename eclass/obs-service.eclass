@@ -50,8 +50,6 @@ RDEPEND="
 	dev-util/suse-build
 "
 
-inherit eutils
-
 [[ -n ${OBS_SERVICE_NAME} ]] || OBS_SERVICE_NAME=${PN/obs-service-/}
 OBS_PROJECT="openSUSE:Tools"
 
