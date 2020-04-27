@@ -10,7 +10,7 @@ PYTHON_REQ_USE="xml"
 
 if [[ ${PV} == *9999 ]]; then
 	inherit git-r3
-	EGIT_REPO_URI="https://github.com/naelstrof/slop.git"
+	EGIT_REPO_URI="https://github.com/openSUSE/${PN}.git"
 else
 	SRC_URI="https://github.com/openSUSE/${PN}/archive/${PV}.tar.gz -> ${P}.tar.gz"
 	KEYWORDS="~amd64 ~x86"
