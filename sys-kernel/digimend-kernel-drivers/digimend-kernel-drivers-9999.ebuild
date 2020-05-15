@@ -3,22 +3,13 @@
 
 EAPI=7
 
-if [[ ${PV} == *9999 ]]; then
-	inherit git-r3
-	EGIT_REPO_URI="https://github.com/DIGImend/${PN}.git"
-else
-	SRC_URI="https://github.com/DIGImend/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
-	KEYWORDS="~amd64 ~x86"
-fi
-
-inherit linux-mod udev
+inherit linux-mod udev git-r3
 
 DESCRIPTION="DIGImend graphics tablet drivers for the Linux kernel"
 HOMEPAGE="http://digimend.github.io/"
-
+EGIT_REPO_URI="https://github.com/DIGImend/${PN}.git"
 LICENSE="GPL-2"
 SLOT="0"
-IUSE=""
 
 BUILD_TARGETS="clean modules"
 BUILD_PARAMS="-C ${KERNEL_DIR} M=${S}"
