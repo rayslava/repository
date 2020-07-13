@@ -1,8 +1,7 @@
-# Copyright 1999-2015 Gentoo Foundation
+# Copyright 1999-2020 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
 
-EAPI=5
+EAPI=7
 
 AUTOTOOLS_IN_SOURCE_BUILD="yes"
 inherit git-r3 autotools-utils
@@ -12,7 +11,7 @@ EGIT_REPO_URI="https://github.com/jeaye/stdman.git"
 
 LICENSE="MIT"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64"
 IUSE=""
 
 DEPEND="virtual/man
