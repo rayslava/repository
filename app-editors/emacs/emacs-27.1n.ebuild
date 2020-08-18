@@ -254,6 +254,11 @@ src_configure() {
 		myconf+=" --without-x --without-ns"
 	fi
 
+	if [[ ${PV} == *n ]]; then
+		myconf+=" --with-nativecomp"
+		./autogen.sh
+	fi
+
 	econf \
 		--program-suffix="-${EMACS_SUFFIX}" \
 		--includedir="${EPREFIX}"/usr/include/${EMACS_SUFFIX} \
