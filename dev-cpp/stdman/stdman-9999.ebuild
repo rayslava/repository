@@ -3,8 +3,7 @@
 
 EAPI=7
 
-AUTOTOOLS_IN_SOURCE_BUILD="yes"
-inherit git-r3 autotools-utils
+inherit git-r3 autotools
 DESCRIPTION="Man pages created from cpprefence.com"
 HOMEPAGE="http://cppreference.com/"
 EGIT_REPO_URI="https://github.com/jeaye/stdman.git"
