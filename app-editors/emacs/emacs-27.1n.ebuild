@@ -141,7 +141,7 @@ EMACS_SUFFIX="emacs-${SLOT}"
 SITEFILE="20${EMACS_SUFFIX}-gentoo.el"
 
 src_prepare() {
-	if [[ ${PV##*.} = 9999 ]]; then
+	if [[ ${PV} == *n ]]; then
 		FULL_VERSION=$(sed -n 's/^AC_INIT([^,]*,[ \t]*\([^ \t,)]*\).*/\1/p' \
 			configure.ac)
 		[[ ${FULL_VERSION} ]] || die "Cannot determine current Emacs version"
