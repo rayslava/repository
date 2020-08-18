@@ -148,8 +148,8 @@ src_prepare() {
 		einfo "Emacs branch: ${EGIT_BRANCH}"
 		einfo "Commit: ${EGIT_VERSION}"
 		einfo "Emacs version number: ${FULL_VERSION}"
-		[[ ${FULL_VERSION} =~ ^${PV%.*}(\..*)?$ ]] \
-			|| die "Upstream version number changed to ${FULL_VERSION}"
+		#[[ ${FULL_VERSION} =~ ^${PV%.*}(\..*)?$ ]] \
+#			|| die "Upstream version number changed to ${FULL_VERSION}"
 	fi
 
 	eapply_user
