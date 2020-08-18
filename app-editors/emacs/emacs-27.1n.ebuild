@@ -131,6 +131,12 @@ RDEPEND="${RDEPEND}
 	!app-editors/emacs-vcs:27
 	app-eselect/eselect-emacs"
 
+if [[ ${PV} == *n ]]; then
+	RDEPEND="${RDEPEND}
+	sys-devel/gcc[jit]
+	"
+fi
+
 EMACS_SUFFIX="emacs-${SLOT}"
 SITEFILE="20${EMACS_SUFFIX}-gentoo.el"
 
