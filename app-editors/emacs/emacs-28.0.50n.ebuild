@@ -158,6 +158,7 @@ src_prepare() {
 	sed -i -e "/^\\.so/s/etags/&-${EMACS_SUFFIX}/" doc/man/ctags.1 || die
 
 	#AT_M4DIR=m4 eautoreconf
+	sed -i -e '/^ELN_DESTDIR =/s/libdir/datarootdir/' Makefile.in || die
 }
 
 src_configure() {
