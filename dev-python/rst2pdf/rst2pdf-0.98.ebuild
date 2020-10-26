@@ -15,9 +15,17 @@ KEYWORDS="amd64"
 SLOT="0"
 
 DEPEND="dev-python/docutils[${PYTHON_USEDEP}]
+	dev-python/aafigure[${PYTHON_USEDEP}]
 	dev-python/pillow[${PYTHON_USEDEP}]
+	dev-python/matplotlib[${PYTHON_USEDEP}]
 	dev-python/pdfrw[${PYTHON_USEDEP}]
+	dev-python/PyPDF2[${PYTHON_USEDEP}]
 	dev-python/pygments[${PYTHON_USEDEP}]
+	dev-python/smartypants[${PYTHON_USEDEP}]
 	>=dev-python/reportlab-2.6[${PYTHON_USEDEP}]
+	dev-python/smartypants[${PYTHON_USEDEP}]
+	dev-python/svglib[${PYTHON_USEDEP}]
+	dev-python/svg2rlg[${PYTHON_USEDEP}]
+	dev-python/xhtml2pdf[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]"
 RDEPEND="${DEPEND}"
