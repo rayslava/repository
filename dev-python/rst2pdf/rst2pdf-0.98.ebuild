@@ -26,6 +26,6 @@ DEPEND="dev-python/docutils[${PYTHON_USEDEP}]
 	dev-python/smartypants[${PYTHON_USEDEP}]
 	dev-python/svglib[${PYTHON_USEDEP}]
 	dev-python/svg2rlg[${PYTHON_USEDEP}]
-	dev-python/xhtml2pdf[${PYTHON_USEDEP}]
+	<dev-python/xhtml2pdf-0.25[${PYTHON_USEDEP}]
 	dev-python/setuptools[${PYTHON_USEDEP}]"
 RDEPEND="${DEPEND}"
