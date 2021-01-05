@@ -130,7 +130,6 @@ DESCRIPTION="Cargo-Tarpaulin is a tool to determine code coverage achieved via t
 # Double check the homepage as the cargo_metadata crate
 # does not provide this value so instead repository is used
 HOMEPAGE="https://github.com/xd009642/tarpaulin"
-		 https://github.com/xd009642/tarpaulin/archive/0.17.0.tar.gz
 SRC_URI="https://github.com/xd009642/tarpaulin/archive/${PV}.tar.gz -> ${P}.tar.gz $(cargo_crate_uris ${CRATES})"
 RESTRICT="mirror"
 # License set may be more restrictive as OR is not respected
