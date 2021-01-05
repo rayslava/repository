@@ -125,6 +125,7 @@ winapi-x86_64-pc-windows-gnu-0.4.0
 inherit cargo
 
 MY_PN="tarpaulin"
+MY_P="${MY_PN}-${PV}"
 
 DESCRIPTION="Cargo-Tarpaulin is a tool to determine code coverage achieved via tests"
 # Double check the homepage as the cargo_metadata crate
@@ -142,4 +143,4 @@ IUSE=""
 DEPEND=""
 RDEPEND=""
 
-S="${MY_PN}-${PV}"
+S="${WORKDIR}/${MY_P}"
