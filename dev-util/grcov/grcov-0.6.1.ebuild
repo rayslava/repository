@@ -114,6 +114,7 @@ textwrap-0.11.0
 thiserror-1.0.22
 thiserror-impl-1.0.22
 thread_local-1.0.1
+tcmalloc-0.3.0
 time-0.1.44
 toml-0.5.7
 typenum-1.12.0
