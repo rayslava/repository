@@ -62,6 +62,7 @@ num-traits-0.2.14
 object-0.22.0
 openssl-probe-0.1.2
 openssl-sys-0.9.58
+openssl-src-111.12.0+1.1.1h
 percent-encoding-2.1.0
 pest-2.1.3
 pin-project-lite-0.1.11
