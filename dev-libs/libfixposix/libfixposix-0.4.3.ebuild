@@ -20,7 +20,6 @@ DESCRIPTION="Thin wrapper over POSIX syscalls"
 HOMEPAGE="http://common-lisp.net/project/iolib/"
 LICENSE="Boost-1"
 SLOT="0"
-KEYWORDS=""
 IUSE=""
 
 COMMON_DEPEND="
