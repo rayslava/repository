@@ -29,3 +29,16 @@ COMMON_DEPEND="
 DEPEND="${COMMON_DEPEND}"
 
 RDEPEND="${COMMON_DEPEND}"
+
+src_prepare() {
+	default
+	eautoreconf -fi
+}
+
+src_compile() {
+	emake all
+}
+
+src_install() {
+	emake DESTDIR="${ED}" install
+}
