@@ -6,7 +6,7 @@ EAPI=7
 AUTOTOOLS_AUTORECONF=1
 WANT_AUTOMAKE="1.11"
 
-inherit autotools git-r3
+inherit autotools
 if [[ ${PV} == *9999 ]]; then
 	inherit git-r3
 	EGIT_REPO_URI="https://github.com/sionescu/${PN}.git"
