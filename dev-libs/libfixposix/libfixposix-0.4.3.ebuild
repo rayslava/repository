@@ -4,7 +4,7 @@
 EAPI=7
 
 AUTOTOOLS_AUTORECONF=1
-WANT_AUTOMAKE="1.11"
+WANT_AUTOMAKE="1.12"
 
 inherit autotools
 if [[ ${PV} == *9999 ]]; then
