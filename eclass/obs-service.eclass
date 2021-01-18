@@ -1,4 +1,4 @@
-# Copyright 1999-2020 Gentoo Authors
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 # @ECLASS: obs-service.eclass
@@ -60,9 +60,9 @@ DESCRIPTION="Open Build Service client module - ${OBS_SERVICE_NAME} service"
 # Just copy files. Files are not compressed.
 obs-service_src_unpack() {
 	debug-print-function ${FUNCNAME} "$@"
-	cd "${DISTDIR}"
-	mkdir -p "${S}"
-	cp ${A} "${S}"
+
+	unpack ${A}
+
 }
 
 # @FUNCTION: obs-service_src_prepare
@@ -86,15 +86,15 @@ obs-service_src_install() {
 	debug-print-function ${FUNCNAME} "$@"
 	debug-print "Installing service \"${OBS_SERVICE_NAME}\""
 	exeinto /usr/libexec/obs/service
-	newexe "${S}"/${OBS_SERVICE_NAME}-${PV} ${OBS_SERVICE_NAME}
+	newexe "${S}"/${OBS_SERVICE_NAME} ${OBS_SERVICE_NAME}
 	insinto /usr/libexec/obs/service
-	newins "${S}"/${OBS_SERVICE_NAME}-${PV}.service ${OBS_SERVICE_NAME}.service
+	newins "${S}"/${OBS_SERVICE_NAME}.service ${OBS_SERVICE_NAME}.service
 	if [[ -n ${ADDITIONAL_FILES} ]]; then
 		debug-print "Installing following additional files:"
 		debug-print "	${ADDITIONAL_FILES}"
 		exeinto /usr/libexec/obs/service/${OBS_SERVICE_NAME}.files
 		for i in ${ADDITIONAL_FILES}; do
-			newexe "${S}"/${i}-${PV} ${i}
+			newexe "${S}"/${i} ${i}
 		done
 	fi
 }
