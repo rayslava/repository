@@ -18,3 +18,7 @@ DEPEND=""
 RDEPEND="${DEPEND}
 		net-misc/wget
 "
+
+src_prepare() {
+	default
+}
