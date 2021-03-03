@@ -21,6 +21,7 @@ dev-util/obs-service-git-buildpackage"
 RDEPEND="${DEPEND}"
 
 src_prepare () {
+	default
 	cd "${S}"
 	find . -type f -exec sed -i 's|/usr/bin/build|/usr/bin/suse-build|g'     {} +
 	find . -type f -exec sed -i 's|/usr/lib/build|/usr/libexec/suse-build|g' {} +
