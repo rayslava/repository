@@ -17,7 +17,8 @@ KEYWORDS="~amd64"
 IUSE=""
 
 DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]
-dev-python/coverage[${PYTHON_USEDEP}]"
+dev-python/coverage[${PYTHON_USEDEP}]
+dev-python/nose[${PYTHON_USEDEP}]"
 RDEPEND="${DEPEND}"
 
 PATCHES=(
