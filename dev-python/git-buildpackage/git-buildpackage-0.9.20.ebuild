@@ -4,7 +4,7 @@
 EAPI=7
 PYTHON_COMPAT=( python3_8 python3_9 )
 
-inherit eutils distutils-r1 python-r1
+inherit epatch distutils-r1 python-r1
 
 DESCRIPTION="Git buildpackage python library"
 HOMEPAGE="http://developer.tizen.org"
