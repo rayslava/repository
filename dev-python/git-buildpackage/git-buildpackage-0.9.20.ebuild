@@ -19,6 +19,6 @@ IUSE=""
 DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
 RDEPEND="${DEPEND}"
 
-src_prepare() {
-	epatch "${FILESDIR}/setup.patch"
-}
+PATCHES=(
+	"${FILESDIR}/setup.patch"
+)
