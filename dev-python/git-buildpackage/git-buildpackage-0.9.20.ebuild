@@ -16,7 +16,8 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
 
-DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]"
+DEPEND="dev-python/setuptools[${PYTHON_USEDEP}]
+dev-python/coverage[${PYTHON_USEDEP}]"
 RDEPEND="${DEPEND}"
 
 PATCHES=(
