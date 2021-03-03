@@ -1,21 +1,21 @@
-# Copyright 1999-2013 Gentoo Foundation
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
-# $Header: $
 
-EAPI=5
-PYTHON_COMPAT=( python2_7 pypy )
+EAPI=7
+PYTHON_COMPAT=( python3_8 python3_9 pypy3 )
 
 inherit eutils distutils-r1
 
 MY_PB=1.1	# Build number
 DESCRIPTION="Git Build System"
 HOMEPAGE="http://developer.tizen.org"
-SRC_URI="https://github.com/01org/${PN}/archive/v${PV}.tar.gz"
+SRC_URI="http://download.tizen.org/tools/latest-release/Ubuntu_20.04/git-buildpackage_${PV}.orig.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
+RESTRICT="mirror"
 
 DEPEND="dev-util/osc
 		dev-python/git-buildpackage"
