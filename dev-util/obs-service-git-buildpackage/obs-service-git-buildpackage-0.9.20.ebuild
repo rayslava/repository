@@ -17,8 +17,7 @@ KEYWORDS="~amd64 ~x86"
 IUSE=""
 RESTRICT="mirror"
 
-DEPEND="dev-util/osc
-		dev-python/git-buildpackage"
+DEPEND="dev-util/osc"
 RDEPEND="${DEPEND}"
 
 src_prepare () {
