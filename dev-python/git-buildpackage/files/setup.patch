@@ -1,0 +1,11 @@
+--- a/setup.py	2021-03-03 11:24:40.393509918 +0300
++++ b/setup.py	2021-03-03 11:24:42.568510112 +0300
+@@ -27,7 +27,7 @@
+     version = "0.0"
+ 
+     try:
+-        popen = subprocess.Popen('dpkg-parsechangelog', stdout=subprocess.PIPE)
++        popen = subprocess.Popen('dpkg-parsechangelog', stdout=subprocess.PIPE, encoding='utf8')
+         out, ret = popen.communicate()
+         for line in out.split('\n'):
+             if line.startswith('Version:'):
