@@ -26,3 +26,8 @@ DEPEND="dev-libs/openssl
 sys-libs/zlib
 dev-util/gperf
 "
+
+src_unpack () {
+	default
+	eapply -p1 "${FILESDIR}/sqlite-tune.patch"
+}
