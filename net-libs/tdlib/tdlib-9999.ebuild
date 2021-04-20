@@ -27,7 +27,7 @@ sys-libs/zlib
 dev-util/gperf
 "
 
-src_unpack () {
+src_prepare () {
 	default
 	eapply "${FILESDIR}/sqlite-tune.patch"
 }
