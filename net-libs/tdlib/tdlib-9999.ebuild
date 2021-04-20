@@ -29,5 +29,5 @@ dev-util/gperf
 
 src_unpack () {
 	default
-	eapply -p1 "${FILESDIR}/sqlite-tune.patch"
+	eapply "${FILESDIR}/sqlite-tune.patch"
 }
