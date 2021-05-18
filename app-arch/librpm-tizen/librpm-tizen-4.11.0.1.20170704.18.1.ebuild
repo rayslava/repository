@@ -1,4 +1,4 @@
-# Copyright 1999-2017 Gentoo Foundation
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=5
@@ -11,8 +11,8 @@ BUILD_PV="$(get_version_component_range 6)"
 UPDATE_PV="$(get_version_component_range 7)"
 DESCRIPTION="Deppaneur perl module"
 HOMEPAGE="http://developer.tizen.org"
-SRC_URI="http://download.tizen.org/tools/latest-release/CentOS_7/src/${PN}-${MAJOR_PV}.tizen${VERSION_REV}-${BUILD_PV}.${UPDATE_PV}.src.rpm"
-
+SRC_URI="http://download.tizen.org/tools/latest-release/openSUSE_42.3/src/${PN}-${MAJOR_PV}.tizen${VERSION_REV}-${BUILD_PV}.${UPDATE_PV}.src.rpm"
+RESTRICT="primaryuri"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64"
