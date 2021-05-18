@@ -39,12 +39,6 @@ src_prepare () {
 	local NSS=`pkg-config --cflags nss`
 	export CFLAGS="${NSPR} ${NSS} -ffunction-sections"
 	rm -rf sqlite
-	tar xjf ${S}/packaging/db-4.8.30.tar.bz2
-	ln -s db-4.8.30 db
-	chmod -R u+w db/*
-	# will get linked from db3
-	rm -f rpmdb/db.h
-	patch -p0 < ${S}/packaging/db-4.8.30-integration.dif
 	cp -a ${WORKDIR}/rpm-tizen_macros tizen_macros
 	rm -f m4/libtool.m4
 	rm -f m4/lt*.m4
@@ -57,12 +51,15 @@ src_configure () {
 	local XML=`pkg-config --cflags libxml-2.0`
 	local LUA=`pkg-config --cflags lua5.1`
 	export CFLAGS="${NSPR} ${NSS} ${XML} ${LUA} -ffunction-sections"
+	export LDFLAGS="${LDFLAGS} -Wl,-Bsymbolic-functions -ffunction-sections"
 	export LUA_LIBS=`pkg-config --libs lua5.1`
 	econf  --disable-dependency-tracking \
 		--enable-python \
-		--without-external-db \
+		--enable-shared \
+		--with-external-db \
 		--without-acl \
 		--without-cap \
 		--with-lua \
-		--with-msm
+		--with-msm \
+		PYTHON_MODULENAME=rpm_tizen
 }
