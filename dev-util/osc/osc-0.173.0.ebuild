@@ -25,7 +25,7 @@ IUSE=""
 
 DEPEND="
 	dev-python/urlgrabber[${PYTHON_USEDEP}]
-	app-arch/rpm[python,${PYTHON_SINGLE_USEDEP}]
+	app-arch/rpm[python]
 	dev-python/m2crypto[${PYTHON_USEDEP}]
 	${PYTHON_DEPS}
 "
