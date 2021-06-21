@@ -31,7 +31,6 @@ DEPEND="
 "
 PDEPEND="${DEPEND}
 	app-admin/sudo
-	dev-util/obs-service-meta
 "
 
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"
