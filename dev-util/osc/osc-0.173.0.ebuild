@@ -3,7 +3,7 @@
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_9 )
+PYTHON_COMPAT=( python3_{8,9,10} )
 PYTHON_REQ_USE="xml"
 
 if [[ ${PV} == *9999 ]]; then
@@ -25,7 +25,7 @@ IUSE=""
 
 DEPEND="
 	dev-python/urlgrabber[${PYTHON_USEDEP}]
-	app-arch/rpm[python,${PYTHON_USEDEP}]
+	app-arch/rpm[python,${PYTHON_SINGLE_USEDEP}]
 	dev-python/m2crypto[${PYTHON_USEDEP}]
 	${PYTHON_DEPS}
 "
