@@ -29,5 +29,4 @@ dev-util/gperf
 
 src_prepare () {
 	default
-	eapply "${FILESDIR}/sqlite-tune.patch"
 }
