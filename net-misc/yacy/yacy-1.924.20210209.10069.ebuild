@@ -3,7 +3,7 @@
 # $HEADER: $
 
 EAPI=6
-inherit eutils versionator
+inherit eutils versionator user
 
 MAJOR_PV="$(get_version_component_range 1-2)"
 REL_PV="$(get_version_component_range 3)"
@@ -34,7 +34,6 @@ src_install() {
 
 	dodir /var/log/yacy
 	chown yacy:yacy "${D}/var/log/yacy"
-	dosed "s:DATA/LOG/:/var/log/yacy/:g" "/opt/yacy/yacy.logging"
 
 	exeinto /etc/init.d
 	newexe "${FILESDIR}/yacy-${MAJOR_PV}.rc" yacy
