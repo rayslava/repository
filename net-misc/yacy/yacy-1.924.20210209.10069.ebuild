@@ -1,7 +1,8 @@
-# Copyright 1999-2011 Gentoo Foundation
+# Copyright 1999-2021 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 # $HEADER: $
 
+EAPI=6
 inherit eutils versionator
 
 MAJOR_PV="$(get_version_component_range 1-2)"
@@ -10,10 +11,10 @@ SVN_PV="$(get_version_component_range 4)"
 
 DESCRIPTION="YaCy - p2p based distributed web-search engine"
 HOMEPAGE="http://www.yacy.net/"
-SRC_URI="http://www.yacy.net/release/yacy_v${MAJOR_PV}_${REL_PV}_${SVN_PV}.tar.gz"
+SRC_URI="https://download.yacy.net/yacy_v${MAJOR_PV}_${REL_PV}_${SVN_PV}.tar.gz"
 SLOT="0"
 KEYWORDS="~x86 ~amd64"
-DEPEND=">=virtual/jdk-1.6.0
+DEPEND=">=virtual/jdk-1.8.0
 	app-admin/sudo"
 LICENSE="GPL-2"
 
