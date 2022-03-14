@@ -3,12 +3,15 @@
 
 EAPI=6
 
+inherit versionator
+
 GH_USER="radareorg"
 GH_REPO="${PN}"
 RESTRICT="primaryuri"
+MY_PV=$(replace_all_version_separators -)
 
 if [[ ${PV} != "9999" ]]; then
-	GH_TAG="${PV}"
+	GH_TAG="${MY_PV}"
 else
 	GH_BUILD_TYPE="live"
 fi
@@ -16,11 +19,11 @@ fi
 inherit eutils github cmake-utils
 
 DESCRIPTION="A Qt and C++ GUI for radare2 ."
-HOMEPAGE="https://github.com/hteso/iaito"
+HOMEPAGE="https://github.com/radareorg/iaito"
 
 LICENSE="GPLv3"
 SLOT="0"
-KEYWORDS=""
+KEYWORDS="~amd64 ~x86"
 IUSE=""
 DEPEND="dev-util/radare2
 >=dev-qt/qtcore-5.3
