@@ -1,12 +1,11 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
 inherit cargo
 
-CRATES="
-"
+CRATES=""
 
 MY_PV="${PV:0:4}-${PV:4:2}-${PV:6:2}"
 
