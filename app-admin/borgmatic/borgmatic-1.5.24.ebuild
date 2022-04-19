@@ -1,8 +1,8 @@
-# Copyright 2020 Gentoo Authors
+# Copyright 2020-2022 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
-PYTHON_COMPAT=( python3_{6,7} )
+PYTHON_COMPAT=( python3_{9,10} )
 
 inherit distutils-r1
 
@@ -16,5 +16,8 @@ SLOT="0"
 
 DEPEND="app-backup/borgbackup
 dev-python/setuptools
-<dev-python/ruamel-yaml-0.17
->=dev-python/pykwalify-1.6.0"
+<dev-python/ruamel-yaml-0.18
+>=dev-python/pykwalify-1.6.0
+>=dev-python/colorama-0.4.1
+dev-python/jsonschema
+dev-python/requests"
