@@ -20,7 +20,7 @@ else
 	EGIT_COMMIT="v${PV}"
 	KEYWORDS="~x86 ~amd64"
 fi
-RESTRICT="mirror"
+
 LICENSE="GPL-3"
 SLOT="0"
 IUSE=""
@@ -43,6 +43,7 @@ RDEPEND="
 DEPEND="${RDEPEND}"
 BDEPEND="
 	virtual/pkgconfig
+	net-p2p/geth
 "
 
 DOCS=( CHANGELOG README.md )
