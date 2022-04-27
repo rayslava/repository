@@ -1,0 +1,10 @@
+(undo-tree-save-format-version . 1)
+"ecd3c56498642e5b68f40852e97396a913ef2081"
+[nil nil nil nil (25193 46604 766871 371000) 0 nil]
+([nil nil ((nil rear-nonsticky nil 1198 . 1199) (nil fontified nil 1 . 1199) (1 . 1199) (t . -1)) nil (25193 46604 766863 216000) 0 nil])
+([nil nil ((#("Gentoo Foundation" 0 17 (fontified nil face font-lock-comment-face)) . 23) (40 . 54) (#("2020" 0 4 (fontified t face font-lock-comment-face)) . 18) (22 . 26) (1199 . 1200) 1) nil (25193 46604 766844 861000) 0 nil])
+([nil nil ((nil rear-nonsticky nil 478 . 479) (nil fontified nil 471 . 479) (nil fontified nil 470 . 471) (nil fontified nil 465 . 470) (nil fontified nil 462 . 465) (462 . 479) (t 25193 46604 769637 954000)) nil (25193 46703 694355 679000) 0 nil])
+([nil nil ((389 . 391) (t 25193 46703 697632 503000)) nil (25193 46753 926809 772000) 0 nil])
+([nil current ((#("
+" 0 1 (fontified t)) . 391) (undo-tree-id0 . -1)) nil (25193 46753 926794 965000) 0 nil])
+nil
