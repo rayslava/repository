@@ -124,6 +124,9 @@ CRATES="
 
 inherit cargo
 
+MY_PN="tarpaulin"
+MY_P="${MY_PN}-${PV}"
+
 DESCRIPTION="Cargo-Tarpaulin is a tool to determine code coverage achieved via tests"
 # Double check the homepage as the cargo_metadata crate
 # does not provide this value so instead repository is used
