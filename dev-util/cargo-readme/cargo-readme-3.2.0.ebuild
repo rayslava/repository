@@ -69,3 +69,7 @@ SLOT="0"
 KEYWORDS="~amd64"
 
 S="${WORKDIR}/${MY_P}"
+
+src_prepare() {
+	mv ${WORKDIR}/cargo-readme-cf66017c0120ae198210ebaf58a0be6a78372974/* ${S}
+}
