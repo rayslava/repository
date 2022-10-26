@@ -1,6 +1,6 @@
 # Copyright 2017 Slava Barinov
 
-EAPI=6
+EAPI=7
 
 GH_USER="tdlib"
 GH_REPO="td"
@@ -13,7 +13,7 @@ else
 	KEYWORDS=""
 fi
 
-inherit github cmake-utils
+inherit github cmake
 
 DESCRIPTION="Cross-platform library for building Telegram clients https://core.telegram.org/tdlib"
 HOMEPAGE="https://github.com/tdlib/td"
