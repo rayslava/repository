@@ -1,0 +1,6 @@
+(undo-tree-save-format-version . 1)
+"42fe0e8407613f84272d97b886ab03c2d91ac088"
+[nil nil nil nil (25494 63245 267268 903000) 0 nil]
+([nil nil ((105 . 106) (t 25494 63225 204225 490000)) nil (25494 63245 267259 856000) 0 nil])
+([nil current ((#("2021" 0 4 (fontified t face font-lock-comment-face)) . 18) (22 . 26) (#(" " 0 1 (fontified t)) . 105) (undo-tree-id0 . -1) (undo-tree-id1 . -1) (undo-tree-id2 . -1) (undo-tree-id3 . -1) 106) nil (25494 63245 267240 981000) 0 nil])
+nil
