@@ -95,14 +95,19 @@ CRATES="
 
 inherit cargo
 
+MY_PN="rust-bindgen"
+MY_P="${MY_PN}-${PV}"
+
 DESCRIPTION="Automatically generates Rust FFI bindings to C and C++ libraries."
 # Double check the homepage as the cargo_metadata crate
 # does not provide this value so instead repository is used
-HOMEPAGE="https://github.com/rust-lang/rust-bindgen"
-SRC_URI="$(cargo_crate_uris)"
+HOMEPAGE="https://github.com/rust-lang/${MY_PN}"
+SRC_URI="https://github.com/rust-lang/${MY_PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz $(cargo_crate_uris ${CRATES})"
 
 # License set may be more restrictive as OR is not respected
 # use cargo-license for a more accurate license picture
 LICENSE="(MIT Apache-2.0 Apache-2.0) Apache-2.0-with-LLVM-exceptions BSD ISC MIT Unicode-DFS-2016 Unlicense"
 SLOT="0"
 KEYWORDS="~amd64"
+
+S="${WORKDIR}/${MY_P}/bindgen-cli"
