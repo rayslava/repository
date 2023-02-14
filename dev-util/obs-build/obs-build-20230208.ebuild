@@ -40,12 +40,12 @@ src_install() {
 	emake DESTDIR="${ED}" pkglibdir=/usr/libexec/obs-build install
 	cd "${ED}"/usr
 	find bin -type l | while read i; do
-		mv "${i}" "${i/bin\//bin/suse-}"
-		use !symlink || dosym "${i/bin\//suse-}" "/usr/${i}"
+		mv "${i}" "${i/bin\//bin/obs-}"
+		use !symlink || dosym "${i/bin\//obs-}" "/usr/${i}"
 	done
 	find share/man/man1 -type f | while read i; do
 		mv "${i}" "${i/man1\//man1/suse-}"
-		use !symlink || dosym "${i/man1\//suse-}" "/usr/${i}"
+		use !symlink || dosym "${i/man1\//obs-}" "/usr/${i}"
 	done
 	find . -type f -exec sed -i 's|/usr/lib/build|/usr/libexec/obs-build|' {} +
 
