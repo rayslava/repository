@@ -5,7 +5,7 @@
  SCM=$(shell if test -d .svn; then echo svn; elif test -d .git; then echo git; fi)
  DATE=$(shell date +%Y%m%d%H%M)
 -BUILD=build
-+BUILD=suse-build
++BUILD=obs-build
 
  INITVM_ARCH=$(shell bash -c '. common_functions ; build_host_arch; echo $$BUILD_INITVM_ARCH')
 
@@ -24,8 +24,8 @@
  	install -m644 unrpm.1 $(DESTDIR)$(man1dir)
 -	ln -sf $(pkglibdir)/build $(DESTDIR)$(bindir)/build
 -	ln -sf $(pkglibdir)/vc    $(DESTDIR)$(bindir)/buildvc
-+	ln -sf $(pkglibdir)/build $(DESTDIR)$(bindir)/suse-build
-+	ln -sf $(pkglibdir)/vc    $(DESTDIR)$(bindir)/suse-buildvc
++	ln -sf $(pkglibdir)/build $(DESTDIR)$(bindir)/obs-build
++	ln -sf $(pkglibdir)/vc    $(DESTDIR)$(bindir)/obs-buildvc
  	ln -sf $(pkglibdir)/unrpm $(DESTDIR)$(bindir)/unrpm
 
  # Allow initvm to be packaged seperately from the rest of build.  This
