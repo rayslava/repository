@@ -16,6 +16,11 @@ BUILD_TARGETS="clean modules"
 BUILD_PARAMS="-C ${KERNEL_DIR} M=${S}"
 MODULE_NAMES="hid-kye(misc:${S}) hid-uclogic(misc:${S}) hid-polostar(misc:${S}) hid-viewsonic(misc:${S})"
 
+src_prepare() {
+	default
+	eapply -p1 "${FILESDIR}"/linux-6.3.patch
+}
+
 src_install() {
 	linux-mod_src_install
 	insinto $(get_udevdir)
