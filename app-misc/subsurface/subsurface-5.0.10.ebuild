@@ -1,4 +1,4 @@
-# Copyright 1999-2016 Gentoo Foundation
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
@@ -6,7 +6,7 @@ EAPI=7
 
 inherit cmake eutils
 
-DESCRIPTION="A simple wrapper script for the Borg backup software that creates and prunes backups"
+DESCRIPTION="Subsurface is an open source divelog program for recreational, tech, and free-divers that runs on Windows, Mac and Linux"
 HOMEPAGE="https://github.com/${PN}/${PN}"
 SRC_URI="https://github.com/${PN}/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 RESTRICT="primaryuri"
@@ -30,3 +30,5 @@ dev-db/sqlite:3
 dev-libs/libgit2
 =dev-libs/libdivecomputer-subsurface-${PV}"
 RDEPEND="${DEPEND}"
+
+CMAKE_MAKEFILE_GENERATOR="emake"

@@ -1,4 +1,4 @@
-# Copyright 1999-2021 Gentoo Authors
+# Copyright 1999-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI="7"
@@ -12,7 +12,7 @@ KEYWORDS="~amd64 ~x86"
 MY_PN="libdc"
 MY_P="${MY_PN}-${PV}"
 
-DESCRIPTION="Library for communication with dive computers from various manufacturers"
+DESCRIPTION="app-misc/subsurface fork of library for communication with dive computers from various manufacturers"
 HOMEPAGE="https://www.libdivecomputer.org"
 LICENSE="LGPL-2.1"
 
