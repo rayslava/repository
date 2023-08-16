@@ -8,13 +8,12 @@ MODULE_VERSION=${PV}
 
 inherit perl-module
 
-MY_PN="Ocsinventory-Unix-Agent"
-MAJ_PV="$(get_version_component_range 1-2)"
+MY_PN="UnixAgent"
 
 DESCRIPTION="OCS Inventory NG Agent"
 
 HOMEPAGE="http://www.ocsinventory-ng.org/"
-SRC_URI="https://github.com/OCSInventory-NG/UnixAgent/archive/v${PV}.tar.gz -> ${P}"
+SRC_URI="https://github.com/OCSInventory-NG/UnixAgent/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 
 RESTRICT="mirror"
 
