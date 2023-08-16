@@ -1,0 +1,2 @@
+PATH=/bin:/sbin:/usr/bin:/usr/sbin:/opt/bin
+3 12 * * * root /usr/bin/ocsinventory-agent --lazy > /dev/null 2>&1
