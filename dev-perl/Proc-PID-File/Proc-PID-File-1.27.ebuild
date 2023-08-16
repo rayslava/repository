@@ -12,7 +12,7 @@ SRC_URI="mirror://cpan/authors/id/E/EC/ECALDER/${P}.tar.gz"
 
 LICENSE="GPL-1"
 SLOT="0"
-KEYWORDS="~x86"
+KEYWORDS="amd64"
 IUSE=""
 
 SRC_TEST="do"
