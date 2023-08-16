@@ -43,7 +43,7 @@ RDEPEND="dev-perl/XML-Simple
 	ssl? ( dev-perl/Crypt-SSLeay )"
 
 DEPEND="${RDEPEND}
-	virtual/perl-Module-Build
+	dev-perl/Module-Build
 	dev-lang/perl
 	sys-devel/make"
 
@@ -52,7 +52,7 @@ S="${WORKDIR}/${MY_PN}-${PV}"
 src_configure()
 {
 	export PERL_AUTOINSTALL=1
-	perl-app_src_configure
+	perl-module_src_configure
 }
 
 src_install()
