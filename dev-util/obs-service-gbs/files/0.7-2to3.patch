@@ -1,0 +1,57 @@
+diff --git a/obs_service_gbs/command.py b/obs_service_gbs/command.py
+index 1673cf5..bd6e3e3 100644
+--- a/obs_service_gbs/command.py
++++ b/obs_service_gbs/command.py
+@@ -20,9 +20,10 @@
+ 
+ import argparse
+ import os
++import errno
+ import shutil
+ import tempfile
+-from ConfigParser import SafeConfigParser
++from configparser import ConfigParser
+ 
+ from gitbuildsys.cmd_export import main as cmd_export
+ from gitbuildsys import log as gbs_log
+@@ -102,14 +103,17 @@ def construct_gbs_args(args, outdir, gitdir):
+ 
+ def read_config(filenames):
+     '''Read configuration file(s)'''
++    # Ensure all values are strings
+     defaults = {'repo-cache-dir': '/var/cache/obs/gbs-repos/',
+-                'gbs-user': None,
+-                'gbs-group': None,
++                'gbs-user': str(None),
++                'gbs-group': str(None),
+                 'repo-cache-refs-hack': 'no'}
+ 
+     filenames = [os.path.expanduser(fname) for fname in filenames]
+     LOGGER.debug('Trying %s config files: %s', len(filenames), filenames)
+-    parser = SafeConfigParser(defaults=defaults)
++
++    # Use ConfigParser in Python 3
++    parser = ConfigParser(defaults=defaults)
+     read = parser.read(filenames)
+     LOGGER.debug('Read %s config files: %s', len(read), read)
+ 
+@@ -118,8 +122,8 @@ def read_config(filenames):
+         parser.add_section('general')
+ 
+     # Read overrides from environment
+-    for key in defaults.keys():
+-        envvar ='OBS_GBS_%s' % key.replace('-', '_').upper()
++    for key in list(defaults.keys()):
++        envvar = 'OBS_GBS_%s' % key.replace('-', '_').upper()
+         if envvar in os.environ:
+             parser.set('general', key, os.environ[envvar])
+ 
+@@ -234,7 +238,7 @@ def main(argv=None):
+     try:
+         os.makedirs(args.outdir)
+     except OSError as err:
+-        if err.errno != os.errno.EEXIST:
++        if err.errno != errno.EEXIST:
+             LOGGER.error('Failed to create outdir: %s', err)
+             return EXIT_ERR_SERVICE
+ 

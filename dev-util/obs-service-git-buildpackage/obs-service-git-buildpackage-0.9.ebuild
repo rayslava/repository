@@ -7,7 +7,7 @@ PYTHON_COMPAT=( python3_{7..11} )
 inherit distutils-r1 obs-service
 
 DESCRIPTION="Git Build System"
-HOMEPAGE="http://developer.tizen.org"
+HOMEPAGE="https://github.com/intel/obs-service-git-buildpackage"
 SRC_URI="https://github.com/intel/${PN}/archive/v${PV}.tar.gz"
 RESTRICT="primaryuri"
 LICENSE="GPL-2"
@@ -15,8 +15,7 @@ SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE=""
 
-DEPEND="dev-util/gbs
-dev-util/obs-service-git-buildpackage"
+DEPEND="dev-util/gbs"
 RDEPEND="${DEPEND}"
 
 PATCHES=(

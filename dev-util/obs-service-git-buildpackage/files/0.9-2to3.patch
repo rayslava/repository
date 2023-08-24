@@ -1,0 +1,50 @@
+diff --git a/gbp_repocache/__init__.py b/gbp_repocache/__init__.py
+index 735fd3b..2b19d76 100644
+--- a/gbp_repocache/__init__.py
++++ b/gbp_repocache/__init__.py
+@@ -229,7 +229,7 @@ class CachedRepo(object):
+ 
+         # Safe repo dir name
+         urlbase, reponame = self._split_url(url)
+-        subdir = hashlib.sha1(urlbase).hexdigest() # pylint: disable=E1101
++        subdir = hashlib.sha1(urlbase.encode('utf-8')).hexdigest() # pylint: disable=E1101
+         self._repodir = os.path.join(self._basedir, subdir, reponame)
+ 
+         self._init_cache_dir()
+diff --git a/obs_service_gbp/command.py b/obs_service_gbp/command.py
+index a11a869..335ca46 100644
+--- a/obs_service_gbp/command.py
++++ b/obs_service_gbp/command.py
+@@ -23,7 +23,7 @@ import argparse
+ import logging
+ import shutil
+ import tempfile
+-from ConfigParser import SafeConfigParser
++from configparser import SafeConfigParser
+ 
+ import gbp.log as gbplog
+ from gbp.rpm import guess_spec, NoSpecError
+@@ -112,7 +112,7 @@ def read_config(filenames=None):
+         parser.add_section('general')
+ 
+     # Read overrides from environment
+-    for key in defaults.keys():
++    for key in list(defaults.keys()):
+         envvar ='OBS_GIT_BUILDPACKAGE_%s' % key.replace('-', '_').upper()
+         if envvar in os.environ:
+             parser.set('general', key, os.environ[envvar])
+diff --git a/repocache_adm/cmd_stat.py b/repocache_adm/cmd_stat.py
+index e723bd9..87eb98a 100644
+--- a/repocache_adm/cmd_stat.py
++++ b/repocache_adm/cmd_stat.py
+@@ -67,7 +67,7 @@ class Stat(SubcommandBase):
+                     num_repos += 1
+ 
+         pretty_sz = " (%s)" % pprint_sz(total_sz) if total_sz >= 1024 else ""
+-        print "Status of %s:" % path
+-        print "Total of %d repos taking %d bytes%s of disk space" % \
+-                (num_repos, total_sz, pretty_sz)
++        print("Status of %s:" % path)
++        print("Total of %d repos taking %d bytes%s of disk space" % \
++                (num_repos, total_sz, pretty_sz))
+         return 0

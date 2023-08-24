@@ -276,7 +276,7 @@ diff -uNr a/gbp/git/modifier.py b/gbp/git/modifier.py
                  items.append((key, val))
 diff -uNr a/gbp/git/repository.py b/gbp/git/repository.py
 --- a/gbp/git/repository.py	2021-05-10 10:44:36.000000000 +0300
-+++ b/gbp/git/repository.py	2023-08-24 12:10:35.539014942 +0300
++++ b/gbp/git/repository.py	2023-08-24 13:05:49.035968809 +0300
 @@ -39,7 +39,7 @@
      def __init__(self, name, fetch_url, push_urls):
          self._name = name
@@ -343,6 +343,18 @@ diff -uNr a/gbp/git/repository.py b/gbp/git/repository.py
              paths = [ paths ]
          args.add_cond(paths, paths)
  
+@@ -2013,7 +2019,10 @@
+                                              cwd=abspath,
+                                              capture_stderr=True,
+                                              capture_stdout=True):
+-                    stderr += out[1]
++                    if isinstance(out[1], bytes):
++                        stderr += out[1].decode()
++                    else:
++                        stderr += out[1]
+             except GitRepositoryError:
+                 raise GitRepositoryError("Error running git init: %s" % stderr)
+             except Exception as excobj:
 diff -uNr a/gbp/git/vfs.py b/gbp/git/vfs.py
 --- a/gbp/git/vfs.py	2021-05-10 10:44:36.000000000 +0300
 +++ b/gbp/git/vfs.py	2023-08-24 11:28:20.534050236 +0300
@@ -460,7 +472,7 @@ diff -uNr a/gbp/rpm/git.py b/gbp/rpm/git.py
  
 diff -uNr a/gbp/rpm/__init__.py b/gbp/rpm/__init__.py
 --- a/gbp/rpm/__init__.py	2021-05-10 10:44:36.000000000 +0300
-+++ b/gbp/rpm/__init__.py	2023-08-24 12:19:46.384007273 +0300
++++ b/gbp/rpm/__init__.py	2023-08-24 13:37:52.418942030 +0300
 @@ -17,7 +17,7 @@
  #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  """provides some rpm source package related helpers"""
@@ -488,6 +500,15 @@ diff -uNr a/gbp/rpm/__init__.py b/gbp/rpm/__init__.py
              filtered.writelines(str(line) for line in self._content
                      if str(line).split(":")[0].strip().lower() not in skip_tags)
              filtered.flush()
+@@ -196,7 +196,7 @@
+             except ValueError as err:
+                 rpmlog = get_librpm_log()
+                 gbp.log.debug("librpm log:\n        %s" %
+-                                "\n        ".join(rpmlog))
++                                "\n        ".join(str(rpmlog)))
+                 raise GbpError("RPM error while parsing %s: %s (%s)" %
+                                 (self.specfile, err, rpmlog[-1]))
+ 
 @@ -243,7 +243,7 @@
      def sources(self):
          """Get all source tags as a dict"""

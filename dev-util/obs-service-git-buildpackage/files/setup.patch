@@ -1,0 +1,13 @@
+diff --git a/setup.py b/setup.py
+index 1f16160..6ac227b 100644
+--- a/setup.py
++++ b/setup.py
+@@ -39,7 +39,7 @@ setup(name='obs_service_gbp',
+       license=tag_from_spec('License'),
+       packages=['obs_service_gbp', 'obs_service_gbp_utils', 'gbp_repocache',
+                 'repocache_adm'],
+-      data_files=[('/usr/lib/obs/service', ['service/git-buildpackage',
++      data_files=[('/usr/libexec/obs/service', ['service/git-buildpackage',
+                     'service/git-buildpackage.service']),
+                   ('/etc/obs/services', ['config/git-buildpackage'])],
+       entry_points={
