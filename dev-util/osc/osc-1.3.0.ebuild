@@ -1,10 +1,9 @@
-# Copyright 2020-2021 Gentoo Authors
+# Copyright 2020-2023 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 
-PYTHON_COMPAT=( python3_{8,9,10} )
-PYTHON_REQ_USE="xml"
+PYTHON_COMPAT=( python3_{7..11} )
 
 if [[ ${PV} == *9999 ]]; then
 	inherit git-r3
@@ -24,14 +23,13 @@ SLOT="0"
 IUSE=""
 
 DEPEND="
-	dev-python/urlgrabber[${PYTHON_USEDEP}]
-	app-arch/rpm[python,${PYTHON_USEDEP}]
+	dev-python/urllib3[${PYTHON_USEDEP}]
+	app-arch/rpm[python]
 	dev-python/m2crypto[${PYTHON_USEDEP}]
 	${PYTHON_DEPS}
 "
 PDEPEND="${DEPEND}
 	app-admin/sudo
-	dev-util/obs-service-meta
 "
 
 REQUIRED_USE="${PYTHON_REQUIRED_USE}"

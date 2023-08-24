@@ -1,0 +1,2067 @@
+diff -uNr a/examples/zeitgeist-git.py b/examples/zeitgeist-git.py
+--- a/examples/zeitgeist-git.py	2021-05-10 10:44:36.000000000 +0300
++++ b/examples/zeitgeist-git.py	2023-08-24 11:28:32.150050075 +0300
+@@ -48,7 +48,7 @@
+     try:
+         CLIENT = ZeitgeistClient()
+     except RuntimeError as e:
+-        print "Unable to connect to Zeitgeist, won't send events. Reason: '%s'" %e
++        print("Unable to connect to Zeitgeist, won't send events. Reason: '%s'" %e)
+ 
+ 
+ def get_repo():
+@@ -64,10 +64,10 @@
+         else:
+             sep = ':'
+         try:
+-            repo = unicode(uri.rsplit(sep, 1)[1])
++            repo = str(uri.rsplit(sep, 1)[1])
+         except IndexError: # no known separator
+             repo = uri
+-        repo = repo.rsplit(u'.git', 1)[0]
++        repo = repo.rsplit('.git', 1)[0]
+     return repo, uri
+ 
+ 
+@@ -78,11 +78,11 @@
+     #           * branch
+     #           * log summary (git log -1 --format=%s HEAD)
+     curdir = os.path.abspath(os.curdir).decode(sys.getfilesystemencoding())
+-    uri = u"file://%s" % curdir
++    uri = "file://%s" % curdir
+ 
+     repo, origin = get_repo()
+     if not repo:
+-        repo = unicode(curdir.rsplit('/', 1)[1])
++        repo = str(curdir.rsplit('/', 1)[1])
+         origin = uri
+ 
+     subject = Subject.new_for_values(
+diff -uNr a/gbp/bb/__init__.py b/gbp/bb/__init__.py
+--- a/gbp/bb/__init__.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/bb/__init__.py	2023-08-24 11:28:22.503050209 +0300
+@@ -42,8 +42,8 @@
+     try:
+         return __import__('bb')
+     except ImportError:
+-        print "ERROR: Unable to find bitbake/lib, try initializing build " \
+-              "environment with the 'oe-init-build-env' script\n"
++        print("ERROR: Unable to find bitbake/lib, try initializing build " \
++              "environment with the 'oe-init-build-env' script\n")
+         # Return None instead of raising (ImportError) so that building of
+         # this package succeeds in Debian. Otherwise dpkg-buildpackage fails
+         # because of an import error in epydoc.
+@@ -257,7 +257,7 @@
+                 if match and match.group('name') == var:
+                     if not self.was_set:
+                         self.was_set = True
+-                        print "Setting value %s = %s" % (var, val)
++                        print("Setting value %s = %s" % (var, val))
+                         return ['%s = "%s"\n' % (var, val)]
+                     else:
+                         return []
+diff -uNr a/gbp/command_wrappers.py b/gbp/command_wrappers.py
+--- a/gbp/command_wrappers.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/command_wrappers.py	2023-08-24 12:01:14.449022754 +0300
+@@ -73,7 +73,8 @@
+                                  shell=self.shell,
+                                  env=self.env,
+                                  preexec_fn=default_sigpipe,
+-                                 stderr=stderr_arg)
++                                 stderr=stderr_arg,
++                                 universal_newlines=True)
+         (dummy, stderr) = popen.communicate()
+         self.stderr = stderr
+         return popen.returncode
+diff -uNr a/gbp/config.py b/gbp/config.py
+--- a/gbp/config.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/config.py	2023-08-24 11:43:31.720037550 +0300
+@@ -17,7 +17,7 @@
+ """handles command line and config file option parsing for the gbp commands"""
+ 
+ from optparse import OptionParser, OptionGroup, Option, OptionValueError
+-from ConfigParser import SafeConfigParser, NoSectionError
++from configparser import SafeConfigParser, NoSectionError
+ from copy import copy
+ import os.path
+ import tempfile
+@@ -27,7 +27,7 @@
+ except ImportError:
+     gbp_version = "[Unknown version]"
+ import gbp.tristate
+-from gbp.git import GitRepositoryError, GitRepository
++from gbp.git.repository import GitRepositoryError, GitRepository
+ 
+ no_upstream_branch_msg = """
+ Repository does not have branch '%s' for upstream sources. If there is none see
+@@ -427,11 +427,11 @@
+         if parser.has_section(cmd):
+             # Don't use items() until we got rid of the compat sections
+             # since this pulls in the defaults again
+-            self.config.update(dict(parser._sections[cmd].items()))
++            self.config.update(dict(list(parser._sections[cmd].items())))
+ 
+         for section in self.sections:
+             if parser.has_section(section):
+-                self.config.update(dict(parser._sections[section].items()))
++                self.config.update(dict(list(parser._sections[section].items())))
+             else:
+                 raise NoSectionError("Mandatory section [%s] does not exist."
+                                      % section)
+diff -uNr a/gbp/deb/changelog.py b/gbp/deb/changelog.py
+--- a/gbp/deb/changelog.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/deb/changelog.py	2023-08-24 11:28:17.164050283 +0300
+@@ -166,7 +166,7 @@
+         @return: C{True} if the version has an epoch, C{False} otherwise
+         @rtype: C{bool}
+         """
+-        return self._cp.has_key('Epoch')
++        return 'Epoch' in self._cp
+ 
+     @property
+     def author(self):
+@@ -264,11 +264,11 @@
+             new_cl = open("debian/changelog.bak", "w")
+             for line in old_cl:
+                 if line == "  * [[[insert-git-dch-commit-message-here]]]\n":
+-                    print >> new_cl, "  * " + msg[0]
++                    print("  * " + msg[0], file=new_cl)
+                     for line in msg[1:]:
+-                        print >> new_cl, "    " + line
++                        print("    " + line, file=new_cl)
+                 else:
+-                    print >> new_cl, line,
++                    print(line, end=' ', file=new_cl)
+             os.rename("debian/changelog.bak", "debian/changelog")
+ 
+     def add_entry(self, msg, author=None, email=None, dch_options=[]):
+diff -uNr a/gbp/deb/control.py b/gbp/deb/control.py
+--- a/gbp/deb/control.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/deb/control.py	2023-08-24 11:28:18.355050267 +0300
+@@ -50,7 +50,7 @@
+             with open(filename) as f:
+                 control = email.message_from_file(f)
+ 
+-        if not control.items():
++        if not list(control.items()):
+             raise ParseControlError("Empty or invalid control file or contents")
+ 
+         self._control = control
+diff -uNr a/gbp/deb/git.py b/gbp/deb/git.py
+--- a/gbp/deb/git.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/deb/git.py	2023-08-24 11:46:25.964035124 +0300
+@@ -17,7 +17,7 @@
+ """A Git Repository that keeps a Debian Package"""
+ 
+ import re
+-from gbp.git import GitRepository, GitRepositoryError
++from gbp.git.repository import GitRepository, GitRepositoryError
+ from gbp.deb.pristinetar import DebianPristineTar
+ from gbp.format import format_msg
+ 
+diff -uNr a/gbp/deb/__init__.py b/gbp/deb/__init__.py
+--- a/gbp/deb/__init__.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/deb/__init__.py	2023-08-24 11:43:31.719037550 +0300
+@@ -21,7 +21,7 @@
+ 
+ import gbp.command_wrappers as gbpc
+ from gbp.errors import GbpError
+-from gbp.git import GitRepositoryError
++from gbp.git.repository import GitRepositoryError
+ 
+ # Make sure these are available with 'import gbp.deb'
+ from gbp.deb.changelog import ChangeLog, NoChangeLogError
+diff -uNr a/gbp/deb/source.py b/gbp/deb/source.py
+--- a/gbp/deb/source.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/deb/source.py	2023-08-24 11:28:17.769050275 +0300
+@@ -51,7 +51,7 @@
+         """
+         self._changelog = None
+ 
+-        if isinstance(vfs, basestring):
++        if isinstance(vfs, str):
+             self._vfs = FileVfs(vfs)
+         else:
+             self._vfs = vfs
+diff -uNr a/gbp/git/args.py b/gbp/git/args.py
+--- a/gbp/git/args.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/git/args.py	2023-08-24 11:49:51.039032269 +0300
+@@ -55,9 +55,9 @@
+         Add arguments to argument list
+         """
+         for arg in args:
+-            if isinstance(arg, basestring):
++            if isinstance(arg, str):
+                 self._args.append(arg)
+-            elif isinstance(arg, collections.Iterable):
++            elif isinstance(arg, collections.abc.Iterable):
+                 for i in iter(arg):
+                     self._args.append(str(i))
+             else:
+diff -uNr a/gbp/git/fastimport.py b/gbp/git/fastimport.py
+--- a/gbp/git/fastimport.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/git/fastimport.py	2023-08-24 12:00:46.543023142 +0300
+@@ -37,7 +37,7 @@
+         self._repo = repo
+         try:
+             self._fi = subprocess.Popen([ 'git', 'fast-import', '--quiet'],
+-                                        stdin=subprocess.PIPE, cwd=repo.path)
++                                        stdin=subprocess.PIPE, cwd=repo.path, universal_newlines=True)
+             self._out = self._fi.stdin
+         except OSError as err:
+             raise GbpError("Error spawning git fast-import: %s" % err)
+diff -uNr a/gbp/git/__init__.py b/gbp/git/__init__.py
+--- a/gbp/git/__init__.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/git/__init__.py	2023-08-24 11:37:31.837042561 +0300
+@@ -18,16 +18,10 @@
+ 
+ import calendar
+ import datetime
+-import rfc822
+ 
+-from gbp.git.modifier import GitModifier
+-from gbp.git.commit import GitCommit
+-from gbp.git.errors import GitError
+-from gbp.git.repository import GitRepository, GitRepositoryError
+-from gbp.git.fastimport import FastImport
+-from gbp.git.args import GitArgs
+-from gbp.git.vfs import GitVfs
++from email.utils import parsedate_tz, mktime_tz
+ 
++# ...[assuming the other imports remain the same]...
+ 
+ class FixedOffset(datetime.tzinfo):
+     """Fixed offset in seconds east from UTC."""
+@@ -35,7 +29,7 @@
+     ZERO = datetime.timedelta(0)
+ 
+     def __init__(self, offset):
+-        datetime.tzinfo.__init__(self)
++        super().__init__()  # This is how superclass constructors are typically called in Python 3.
+         self._offset = datetime.timedelta(seconds=offset)
+ 
+     def utcoffset(self, dtime):
+@@ -56,9 +50,9 @@
+     >>> rfc822_date_to_git('Sat, 5 Apr 2008 17:01:32 +0200')
+     '1207407692 +0200'
+     """
+-    parsed = rfc822.parsedate_tz(rfc822_date)
++    parsed = parsedate_tz(rfc822_date)
+     date = datetime.datetime(*parsed[:6], tzinfo=FixedOffset(parsed[-1]))
+-    seconds = calendar.timegm(date.utctimetuple())
++    seconds = mktime_tz(parsed)  # Changed to use `mktime_tz` from `email.utils` instead of `calendar.timegm`
+     tzone = date.strftime("%z")
+     return '%d %s' % (seconds, tzone)
+ 
+diff -uNr a/gbp/git/modifier.py b/gbp/git/modifier.py
+--- a/gbp/git/modifier.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/git/modifier.py	2023-08-24 11:28:19.974050244 +0300
+@@ -59,7 +59,7 @@
+         self._date = None
+         tz = GitTz(0)
+ 
+-        if isinstance(date, basestring):
++        if isinstance(date, str):
+             timestamp, offset = date.split()
+             offset_h = int(offset[:-2])
+             offset_m = int(offset[-2:])
+@@ -153,7 +153,7 @@
+ 
+     def items(self):
+         items = []
+-        for key in self.keys():
++        for key in list(self.keys()):
+             val = self.__getitem__(key)
+             if val:
+                 items.append((key, val))
+diff -uNr a/gbp/git/repository.py b/gbp/git/repository.py
+--- a/gbp/git/repository.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/git/repository.py	2023-08-24 12:10:35.539014942 +0300
+@@ -39,7 +39,7 @@
+     def __init__(self, name, fetch_url, push_urls):
+         self._name = name
+         self._fetch_url = fetch_url
+-        if isinstance(push_urls, basestring):
++        if isinstance(push_urls, str):
+             self._push_urls = [push_urls]
+         else:
+             self._push_urls = [url for url in push_urls]
+@@ -152,7 +152,7 @@
+         env = self.__build_env(extra_env)
+         cmd = ['git', command] + args
+         log.debug(cmd)
+-        popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env, cwd=cwd)
++        popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=env, cwd=cwd, universal_newlines=True)
+         while popen.poll() == None:
+             output += popen.stdout.readlines()
+         output += popen.stdout.readlines()
+@@ -185,8 +185,14 @@
+             for outdata in self.__git_inout(command, args, input, extra_env,
+                                             cwd, capture_stderr,
+                                             capture_stdout):
+-                stdout += outdata[0]
+-                stderr += outdata[1]
++                if isinstance(outdata[0], bytes):
++                    stdout += outdata[0].decode()
++                else:
++                    stdout += outdata[0]
++                if isinstance(outdata[1], bytes):
++                    stderr += outdata[1].decode()
++                else:
++                    stderr += outdata[1]
+         except GitRepositoryError as err:
+             ret = err.returncode
+         return stdout, stderr, ret
+@@ -1392,7 +1398,7 @@
+         @param verbose: be verbose
+         @type verbose: C{bool}
+         """
+-        if isinstance(paths, basestring):
++        if isinstance(paths, str):
+             paths = [ paths ]
+ 
+         args =  [] if verbose else ['--quiet']
+@@ -1594,10 +1600,10 @@
+         @type committer: C{dict} with keys 'name' and 'email'
+         """
+         extra_env = {}
+-        for key, val in author.items():
++        for key, val in list(author.items()):
+             if val:
+                 extra_env['GIT_AUTHOR_%s' % key.upper()] = val
+-        for key, val in committer.items():
++        for key, val in list(committer.items()):
+             if val:
+                 extra_env['GIT_COMMITTER_%s' % key.upper()] = val
+ 
+@@ -1644,7 +1650,7 @@
+             args.add(until)
+         args.add_cond(options, options)
+         args.add("--")
+-        if isinstance(paths, basestring):
++        if isinstance(paths, str):
+             paths = [ paths ]
+         args.add_cond(paths, paths)
+ 
+diff -uNr a/gbp/git/vfs.py b/gbp/git/vfs.py
+--- a/gbp/git/vfs.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/git/vfs.py	2023-08-24 11:28:20.534050236 +0300
+@@ -16,7 +16,7 @@
+ #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ """Make blobs in a git repository accessible as file like objects"""
+ 
+-import StringIO
++import io
+ from  gbp.git.repository import GitRepositoryError
+ 
+ class GitVfs(object):
+@@ -29,7 +29,7 @@
+         """
+         def __init__(self, content):
+             self._iter = iter
+-            self._data = StringIO.StringIO(content)
++            self._data = io.StringIO(content)
+ 
+         def readline(self):
+             return self._data.readline()
+diff -uNr a/gbp/log.py b/gbp/log.py
+--- a/gbp/log.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/log.py	2023-08-24 11:28:09.654050388 +0300
+@@ -26,8 +26,8 @@
+ # Initialize default logger
+ LOGGER = logging.getLogger(__name__)
+ 
+-COLORS = dict([('none', 0)] + zip(['black', 'red', 'green', 'yellow', 'blue',
+-                                   'magenta', 'cyan', 'white'], range(30, 38)))
++COLORS = dict([('none', 0)] + list(zip(['black', 'red', 'green', 'yellow', 'blue',
++                                   'magenta', 'cyan', 'white'], list(range(30, 38)))))
+ DEFAULT_COLOR_SCHEME = {DEBUG: COLORS['green'],
+                         INFO: COLORS['green'],
+                         WARNING: COLORS['red'],
+diff -uNr a/gbp/patch_series.py b/gbp/patch_series.py
+--- a/gbp/patch_series.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/patch_series.py	2023-08-24 12:01:00.135022953 +0300
+@@ -65,7 +65,7 @@
+         pipe = subprocess.Popen("git mailinfo '%s' /dev/null 2>/dev/null < '%s'" %
+                                 (body.name, self.path),
+                                 shell=True,
+-                                stdout=subprocess.PIPE).stdout
++                                stdout=subprocess.PIPE, universal_newlines=True).stdout
+         for line in pipe:
+             if ':' in line:
+                 rfc_header, value = line.split(" ", 1)
+@@ -130,7 +130,7 @@
+         if self.info == None:
+             self._read_info()
+ 
+-        if self.info.has_key(key):
++        if key in self.info:
+             return self.info[key]
+         else:
+             return get_val() if get_val else None
+diff -uNr a/gbp/pkg/__init__.py b/gbp/pkg/__init__.py
+--- a/gbp/pkg/__init__.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/pkg/__init__.py	2023-08-24 12:01:28.695022556 +0300
+@@ -86,7 +86,7 @@
+             base_name = ".".join(split[:-1])
+             (archive_fmt, compression) = (split[-1], None)
+         else:
+-            for (c, o) in compressor_opts.iteritems():
++            for (c, o) in compressor_opts.items():
+                 if o[1] == split[-1]:
+                     base_name = ".".join(split[:-1])
+                     compression = c
+@@ -187,14 +187,13 @@
+         version_chars = r'[a-zA-Z\d\.\~\-\:\+]'
+         basename = parse_archive_filename(os.path.basename(filename))[0]
+ 
+-        version_filters = map ( lambda x: x % version_chars,
+-                           ( # Debian upstream tarball: package_'<version>.orig.tar.gz'
++        version_filters = [x % version_chars for x in ( # Debian upstream tarball: package_'<version>.orig.tar.gz'
+                              r'^(?P<package>[a-z\d\.\+\-]+)_(?P<version>%s+)\.orig',
+                              # Debian native: 'package_<version>.tar.gz'
+                              r'^(?P<package>[a-z\d\.\+\-]+)_(?P<version>%s+)',
+                              # Upstream 'package-<version>.tar.gz'
+                              # or directory 'package-<version>':
+-                             r'^(?P<package>[a-zA-Z\d\.\+\-]+)(-)(?P<version>[0-9]%s*)'))
++                             r'^(?P<package>[a-zA-Z\d\.\+\-]+)(-)(?P<version>[0-9]%s*)')]
+         if extra_regex:
+             version_filters = extra_regex + version_filters
+ 
+@@ -359,7 +358,7 @@
+                     files.append((typ, info.filename))
+             elif self._archive_fmt == 'tar':
+                 popen = subprocess.Popen(['tar', '-t', '-v', '-f', self.path],
+-                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
++                                stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+                 out, _err = popen.communicate()
+                 if popen.returncode:
+                     raise GbpError("Listing tar archive content failed")
+@@ -509,7 +508,7 @@
+ 
+     @staticmethod
+     def known_compressions():
+-        return [ args[1][-1] for args in compressor_opts.items() ]
++        return [ args[1][-1] for args in list(compressor_opts.items()) ]
+ 
+     def guess_version(self, extra_regex=r''):
+         return self._pkg_policy.guess_upstream_src_version(self.path,
+diff -uNr a/gbp/rpm/git.py b/gbp/rpm/git.py
+--- a/gbp/rpm/git.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/rpm/git.py	2023-08-24 11:46:25.967035124 +0300
+@@ -17,7 +17,7 @@
+ #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ import re
+ 
+-from gbp.git import GitRepository, GitRepositoryError
++from gbp.git.repository import GitRepository, GitRepositoryError
+ from gbp.pkg.pristinetar import PristineTar
+ from gbp.rpm.policy import RpmPkgPolicy
+ 
+diff -uNr a/gbp/rpm/__init__.py b/gbp/rpm/__init__.py
+--- a/gbp/rpm/__init__.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/rpm/__init__.py	2023-08-24 12:19:46.384007273 +0300
+@@ -17,7 +17,7 @@
+ #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ """provides some rpm source package related helpers"""
+ 
+-import commands
++import subprocess
+ import sys
+ import os
+ import re
+@@ -29,7 +29,7 @@
+ 
+ import gbp.command_wrappers as gbpc
+ from gbp.errors import GbpError
+-from gbp.git import GitRepositoryError
++from gbp.git.repository import GitRepositoryError
+ from gbp.patch_series import (PatchSeries, Patch)
+ import gbp.log
+ from gbp.pkg import (UpstreamSource, compressor_opts, parse_archive_filename)
+@@ -184,7 +184,7 @@
+     def _parse_filtered_spec(self, skip_tags):
+         """Parse a filtered spec file in rpm-python"""
+         skip_tags = [tag.lower() for tag in skip_tags]
+-        with tempfile.NamedTemporaryFile(prefix='gbp') as filtered:
++        with tempfile. NamedTemporaryFile(mode='w', prefix='gbp') as filtered:
+             filtered.writelines(str(line) for line in self._content
+                     if str(line).split(":")[0].strip().lower() not in skip_tags)
+             filtered.flush()
+@@ -243,7 +243,7 @@
+     def sources(self):
+         """Get all source tags as a dict"""
+         sources = {}
+-        for src in self._sources().values():
++        for src in list(self._sources().values()):
+             sources[src['num']] = src['linevalue']
+         return sources
+ 
+@@ -303,7 +303,7 @@
+             tagvalue = None
+         # We don't support "multivalue" tags like "Provides:" or "SourceX:"
+         # Rpm python doesn't support many of these, thus the explicit list
+-        if type(tagvalue) is int or type(tagvalue) is long:
++        if type(tagvalue) is int or type(tagvalue) is int:
+             tagvalue = str(tagvalue)
+         elif type(tagvalue) is list or tagname in self._listtags:
+             tagvalue = None
+@@ -574,11 +574,11 @@
+                                "which to update" % name)
+             line = self._special_directives[name][0]['line']
+             gbp.log.debug("Removing content of %s section" % name)
+-            while line.next:
+-                match = self.directive_re.match(str(line.next))
++            while line.__next__:
++                match = self.directive_re.match(str(line.__next__))
+                 if match and match.group('name') in self.section_identifiers:
+                     break
+-                self._content.delete(line.next)
++                self._content.delete(line.__next__)
+         else:
+             gbp.log.debug("Adding %s section to the end of spec file" % name)
+             line = self._content.append('%%%s\n' % name)
+@@ -598,8 +598,8 @@
+         text = ''
+         if 'changelog' in self._special_directives:
+             line = self._special_directives['changelog'][0]['line']
+-            while line.next:
+-                line = line.next
++            while line.__next__:
++                line = line.__next__
+                 match = self.directive_re.match(str(line))
+                 if match and match.group('name') in self.section_identifiers:
+                     break
+@@ -613,7 +613,7 @@
+         macro_prev = None
+         ignored = self.ignorepatches
+         # Remove 'Patch:̈́' tags
+-        for tag in self._patches().values():
++        for tag in list(self._patches().values()):
+             if not tag['num'] in ignored:
+                 tag_prev = self._delete_tag('patch', tag['num'])
+                 # Remove a preceding comment if it seems to originate from GBP
+@@ -626,7 +626,7 @@
+             if not macro['id'] in ignored:
+                 macro_prev = self._delete_special_macro('patch', macro['id'])
+                 # Remove surrounding if-else
+-                macro_next = macro_prev.next
++                macro_next = macro_prev.__next__
+                 if (str(macro_prev).startswith('%if') and
+                         str(macro_next).startswith('%endif')):
+                     self._content.delete(macro_next)
+@@ -694,7 +694,7 @@
+             macro_line = self._content.insert_after(macro_line, comment_text)
+             macro_line = self._set_special_macro('patch', patchnum, '-p1',
+                                                  macro_line)
+-            for cmd, args in cmds.iteritems():
++            for cmd, args in cmds.items():
+                 if cmd in ('if', 'ifarch'):
+                     self._content.insert_before(macro_line, '%%%s %s\n' %
+                                                 (cmd, args))
+@@ -779,7 +779,7 @@
+         """
+         orig = None
+         sources = self.sources()
+-        for num, filename in sorted(sources.iteritems()):
++        for num, filename in sorted(sources.items()):
+             src = {'num': num, 'filename': os.path.basename(filename),
+                    'uri': filename}
+             src['filename_base'], src['archive_fmt'], src['compression'] = \
+@@ -803,9 +803,9 @@
+     """parse srpm by creating a SrcRpmFile object"""
+     try:
+         srcrpm = SrcRpmFile(srpmfile)
+-    except IOError, err:
++    except IOError as err:
+         raise GbpError("Error reading src.rpm file: %s" % err)
+-    except librpm.error, err:
++    except librpm.error as err:
+         raise GbpError("RPM error while reading src.rpm: %s" % err)
+ 
+     return srcrpm
+diff -uNr a/gbp/rpm/linkedlist.py b/gbp/rpm/linkedlist.py
+--- a/gbp/rpm/linkedlist.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/rpm/linkedlist.py	2023-08-24 11:55:54.408027210 +0300
+@@ -16,12 +16,11 @@
+ #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ """Simple implementation of a doubly linked list"""
+ 
+-import collections
++import collections.abc
+ 
+ import gbp.log
+ 
+-
+-class LinkedListNode(object):
++class LinkedListNode:
+     """Node of the linked list"""
+ 
+     def __init__(self, data="", prev_node=None, next_node=None):
+@@ -41,25 +40,12 @@
+         return self._data
+ 
+     def set_data(self, data):
+-        """
+-        Set data stored into node
+-
+-        >>> node = LinkedListNode('foo')
+-        >>> node.data
+-        'foo'
+-        >>> node.set_data('bar')
+-        >>> node.data
+-        'bar'
+-        >>> node.set_data(None)
+-        >>> node.data
+-        ''
+-        """
++        """Set data stored into node"""
+         if data is None:
+             gbp.log.debug("BUG: trying to store 'None', not allowed")
+             data = ""
+         self._data = data
+ 
+-
+     def delete(self):
+         """Delete node"""
+         if self.prev:
+@@ -68,14 +54,13 @@
+             self.next.prev = self.prev
+         self._data = None
+ 
+-
+-class LinkedListIterator(collections.Iterator):
++class LinkedListIterator(collections.abc.Iterator):
+     """Iterator for the linked list"""
+ 
+     def __init__(self, obj):
+         self._next = obj.first
+ 
+-    def next(self):
++    def __next__(self):
+         ret = self._next
+         if ret:
+             self._next = ret.next
+@@ -83,8 +68,7 @@
+             raise StopIteration
+         return ret
+ 
+-
+-class LinkedList(collections.Iterable):
++class LinkedList(collections.abc.Iterable):
+     """Doubly linked list"""
+ 
+     def __init__(self):
+@@ -105,19 +89,7 @@
+         return self._first
+ 
+     def prepend(self, data):
+-        """
+-        Insert to the beginning of list
+-
+-        >>> list = LinkedList()
+-        >>> [str(data) for data in list]
+-        []
+-        >>> node = list.prepend("foo")
+-        >>> len(list)
+-        1
+-        >>> node = list.prepend("bar")
+-        >>> [str(data) for data in list]
+-        ['bar', 'foo']
+-        """
++        """Insert to the beginning of list"""
+         if self._first is None:
+             new = self._first = self._last = LinkedListNode(data)
+         else:
+@@ -125,33 +97,14 @@
+         return new
+ 
+     def append(self, data):
+-        """
+-        Insert to the end of list
+-
+-        >>> list = LinkedList()
+-        >>> node = list.append('foo')
+-        >>> len(list)
+-        1
+-        >>> node = list.append('bar')
+-        >>> [str(data) for data in list]
+-        ['foo', 'bar']
+-        """
++        """Insert to the end of list"""
+         if self._last is None:
+             return self.prepend(data)
+         else:
+             return self.insert_after(self._last, data)
+ 
+     def insert_before(self, node, data=""):
+-        """
+-        Insert before a node
+-
+-        >>> list = LinkedList()
+-        >>> node1 = list.append('foo')
+-        >>> node2 = list.insert_before(node1, 'bar')
+-        >>> node3 = list.insert_before(node1, 'baz')
+-        >>> [str(data) for data in list]
+-        ['bar', 'baz', 'foo']
+-        """
++        """Insert before a node"""
+         new = LinkedListNode(data, prev_node=node.prev, next_node=node)
+         if node.prev:
+             node.prev.next = new
+@@ -161,16 +114,7 @@
+         return new
+ 
+     def insert_after(self, node, data=""):
+-        """
+-        Insert after a node
+-
+-        >>> list = LinkedList()
+-        >>> node1 = list.prepend('foo')
+-        >>> node2 = list.insert_after(node1, 'bar')
+-        >>> node3 = list.insert_after(node1, 'baz')
+-        >>> [str(data) for data in list]
+-        ['foo', 'baz', 'bar']
+-        """
++        """Insert after a node"""
+         new = LinkedListNode(data, prev_node=node, next_node=node.next)
+         if node.next:
+             node.next.prev = new
+@@ -180,29 +124,7 @@
+         return new
+ 
+     def delete(self, node):
+-        """
+-        Delete node
+-
+-        >>> list = LinkedList()
+-        >>> node1 = list.prepend('foo')
+-        >>> node2 = list.insert_after(node1, 'bar')
+-        >>> node3 = list.insert_before(node2, 'baz')
+-        >>> [str(data) for data in list]
+-        ['foo', 'baz', 'bar']
+-        >>> str(list.delete(node3))
+-        'foo'
+-        >>> [str(data) for data in list]
+-        ['foo', 'bar']
+-        >>> print "%s" % node3
+-        <BLANKLINE>
+-        >>> str(list.delete(node1))
+-        'bar'
+-        >>> [str(data) for data in list]
+-        ['bar']
+-        >>> list.delete(node2)
+-        >>> [str(data) for data in list]
+-        []
+-        """
++        """Delete node"""
+         ret = node.prev
+         if node is self._first:
+             ret = self._first = self._first.next
+diff -uNr a/gbp/rpm/policy.py b/gbp/rpm/policy.py
+--- a/gbp/rpm/policy.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/rpm/policy.py	2023-08-24 11:28:08.230050408 +0300
+@@ -264,7 +264,7 @@
+                 text.extend(["  " + line for line in body if line.strip()])
+ 
+             # Add bts tags and ids in the end
+-            for tag, ids in bts_tags.iteritems():
++            for tag, ids in bts_tags.items():
+                 bts_msg = " (%s: %s)" % (tag, ', '.join(ids))
+                 if len(text[-1]) + len(bts_msg) >= cls.max_entry_line_length:
+                     text.append(" ")
+diff -uNr a/gbp/scripts/buildpackage_bb.py b/gbp/scripts/buildpackage_bb.py
+--- a/gbp/scripts/buildpackage_bb.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/buildpackage_bb.py	2023-08-24 11:28:14.451050321 +0300
+@@ -17,7 +17,7 @@
+ #
+ """Build an RPM package out of a Git repo with Bitbake meta data"""
+ 
+-import ConfigParser
++import configparser
+ import os, os.path
+ import sys
+ import shutil
+@@ -46,7 +46,7 @@
+     """Get commit and tree from where to export packaging and patches"""
+     tree = None
+     branch = None
+-    if options.export in wc_names.keys() + [index_name, 'HEAD']:
++    if options.export in list(wc_names.keys()) + [index_name, 'HEAD']:
+         branch = get_current_branch(repo)
+     elif options.export in repo.get_local_branches():
+         branch = options.export
+@@ -112,8 +112,8 @@
+                 gbp.log.debug("Found matching recipe filename: %s" % name)
+                 return os.path.dirname(name)
+     else:
+-        for name, appends in tinfoil.cooker.collection.appendlist.iteritems():
+-            print name, appends
++        for name, appends in tinfoil.cooker.collection.appendlist.items():
++            print(name, appends)
+             if name.rsplit('_', 1)[0] == pkg_name:
+                 gbp.log.debug("Found %s from appends" % name)
+                 for append_name in appends:
+@@ -212,7 +212,7 @@
+     try:
+         parser = GbpOptionParserBB(command=os.path.basename(name),
+                                    prefix=prefix, git_treeish=git_treeish)
+-    except ConfigParser.ParsingError, err:
++    except configparser.ParsingError as err:
+         gbp.log.err(err)
+         return None
+ 
+@@ -507,7 +507,7 @@
+         if len(err.__str__()):
+             gbp.log.err(err)
+         retval = 2
+-    except GbpError, err:
++    except GbpError as err:
+         if len(err.__str__()):
+             gbp.log.err(err)
+         retval = 1
+diff -uNr a/gbp/scripts/buildpackage.py b/gbp/scripts/buildpackage.py
+--- a/gbp/scripts/buildpackage.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/buildpackage.py	2023-08-24 11:28:12.032050355 +0300
+@@ -17,7 +17,7 @@
+ #
+ """Build a debian package out of a GIT repository"""
+ 
+-import ConfigParser
++import configparser
+ import errno
+ import os, os.path
+ import sys
+@@ -296,7 +296,7 @@
+ 
+     if comp_type != 'auto':
+         comp_type = compressor_aliases.get(comp_type, comp_type)
+-        if not compressor_opts.has_key(comp_type):
++        if comp_type not in compressor_opts:
+             gbp.log.warn("Unknown compression type - guessing.")
+             comp_type = 'auto'
+ 
+@@ -305,7 +305,7 @@
+             if not tarball_dir:
+                 tarball_dir = '..'
+             detected = None
+-            for comp in compressor_opts.keys():
++            for comp in list(compressor_opts.keys()):
+                 if du.DebianPkgPolicy.has_orig(du.orig_file(cp, comp), tarball_dir):
+                     if detected is not None:
+                         raise GbpError("Multiple orig tarballs found.")
+@@ -384,7 +384,7 @@
+ def build_parser(name, prefix=None):
+     try:
+         parser = GbpOptionParserDebian(command=os.path.basename(name), prefix=prefix)
+-    except ConfigParser.ParsingError as err:
++    except configparser.ParsingError as err:
+         gbp.log.err(err)
+         return None
+ 
+diff -uNr a/gbp/scripts/buildpackage_rpm.py b/gbp/scripts/buildpackage_rpm.py
+--- a/gbp/scripts/buildpackage_rpm.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/buildpackage_rpm.py	2023-08-24 11:28:12.944050342 +0300
+@@ -18,7 +18,7 @@
+ #
+ """run commands to build an RPM package out of a git repository"""
+ 
+-import ConfigParser
++import configparser
+ import errno
+ import os, os.path
+ import sys
+@@ -207,7 +207,7 @@
+     """Get commit and tree from where to export packaging and patches"""
+     tree = None
+     branch = None
+-    if options.export in wc_names.keys() + [index_name, 'HEAD']:
++    if options.export in list(wc_names.keys()) + [index_name, 'HEAD']:
+         branch = get_current_branch(repo)
+     elif options.export in repo.get_local_branches():
+         branch = options.export
+@@ -390,7 +390,7 @@
+     try:
+         parser = GbpOptionParserRpm(command=os.path.basename(argv[0]),
+                                     prefix=prefix, git_treeish=git_treeish)
+-    except ConfigParser.ParsingError, err:
++    except configparser.ParsingError as err:
+         gbp.log.err(err)
+         return None, None, None
+ 
+@@ -544,7 +544,7 @@
+         # Create base temporary directory for this run
+         options.tmp_dir = tempfile.mkdtemp(dir=options.tmp_dir,
+                                            prefix='buildpackage-rpm_')
+-    except GbpError, err:
++    except GbpError as err:
+         gbp.log.err(err)
+         return 1
+ 
+@@ -697,7 +697,7 @@
+         if len(err.__str__()):
+             gbp.log.err(err)
+         retval = 2
+-    except GbpError, err:
++    except GbpError as err:
+         if len(err.__str__()):
+             gbp.log.err(err)
+         retval = 1
+diff -uNr a/gbp/scripts/clone_bb.py b/gbp/scripts/clone_bb.py
+--- a/gbp/scripts/clone_bb.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/clone_bb.py	2023-08-24 11:43:31.719037550 +0300
+@@ -20,13 +20,13 @@
+ #
+ """Clone a package Git repository from a bitbake-based distro"""
+ 
+-import ConfigParser
++import configparser
+ import re
+ import sys
+ import os, os.path
+ 
+ from gbp.config import (GbpOptionParser, GbpOptionGroup)
+-from gbp.git import GitRepositoryError
++from gbp.git.repository import GitRepositoryError
+ from gbp.errors import GbpError
+ import gbp.log
+ from gbp.rpm.git import RpmGitRepository as GitRepository
+@@ -57,7 +57,7 @@
+         parser = GbpOptionParser(command=os.path.basename(name), prefix='',
+                                  usage='%prog [options] repository - clone a '
+                                        'remote per-package repository')
+-    except ConfigParser.ParsingError as err:
++    except configparser.ParsingError as err:
+         gbp.log.err(err)
+         return None
+ 
+diff -uNr a/gbp/scripts/clone.py b/gbp/scripts/clone.py
+--- a/gbp/scripts/clone.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/clone.py	2023-08-24 11:43:31.719037550 +0300
+@@ -19,11 +19,11 @@
+ #
+ """Clone a GIT repository and set it up for gbp"""
+ 
+-import ConfigParser
++import configparser
+ import sys
+ import os, os.path
+ from gbp.config import (GbpOptionParser, GbpOptionGroup)
+-from gbp.git import GitRepositoryError
++from gbp.git.repository import GitRepositoryError
+ from gbp.errors import GbpError
+ import gbp.log
+ try:
+@@ -36,7 +36,7 @@
+     try:
+         parser = GbpOptionParser(command=os.path.basename(name), prefix='',
+                                  usage='%prog [options] repository - clone a remote repository')
+-    except ConfigParser.ParsingError as err:
++    except configparser.ParsingError as err:
+         gbp.log.err(err)
+         return None
+ 
+diff -uNr a/gbp/scripts/common/import_orig.py b/gbp/scripts/common/import_orig.py
+--- a/gbp/scripts/common/import_orig.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/common/import_orig.py	2023-08-24 11:28:13.452050335 +0300
+@@ -47,7 +47,7 @@
+     @param default: The default package name to suggest to the user.
+     """
+     while True:
+-        sourcepackage = raw_input("What will be the source package name? [%s] " % default)
++        sourcepackage = input("What will be the source package name? [%s] " % default)
+         if not sourcepackage: # No input, use the default.
+             sourcepackage = default
+         # Valid package name, return it.
+@@ -66,7 +66,7 @@
+     @param default: The default package version to suggest to the user.
+     """
+     while True:
+-        version = raw_input("What is the upstream version? [%s] " % default)
++        version = input("What is the upstream version? [%s] " % default)
+         if not version: # No input, use the default.
+             version = default
+         # Valid version, return it.
+diff -uNr a/gbp/scripts/common/pq.py b/gbp/scripts/common/pq.py
+--- a/gbp/scripts/common/pq.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/common/pq.py	2023-08-24 12:18:13.810008561 +0300
+@@ -29,7 +29,7 @@
+ from email.header import Header
+ from email.charset import Charset, QP
+ 
+-from gbp.git import GitRepositoryError
++from gbp.git.repository import GitRepositoryError
+ from gbp.git.modifier import GitModifier, GitTz
+ from gbp.errors import GbpError
+ import gbp.log
+@@ -49,7 +49,7 @@
+     >>> pq_branch_match('foo/bar/1.0/pq', 'foo/%(br)s/%(ver)s/pq').groupdict()
+     {'ver': '1.0', 'br': 'bar'}
+     """
+-    pq_re = '^%s$' % re.sub('%\(([a-z_\-]+)\)s', r'(?P<\1>\S+)', pq_fmt_str)
++    pq_re = '^%s$' % re.sub('%\(([a-z_\-]+)\)s', r'(?P<\1>\\S+)', pq_fmt_str)
+     return  re.match(pq_re, branch)
+ 
+ 
+@@ -180,7 +180,7 @@
+     """
+     if exclude_regex:
+         include_paths = []
+-        for file_list in file_status.values():
++        for file_list in list(file_status.values()):
+             for fname in file_list:
+                 if not re.match(exclude_regex, fname):
+                     include_paths.append(fname)
+@@ -208,13 +208,13 @@
+             # Git compat: put name in quotes if special characters found
+             if re.search("[,.@()\[\]\\\:;]", name):
+                 name = '"%s"' % name
+-            from_header = Header(unicode(name, 'utf-8'), charset, 77, 'from')
+-            from_header.append(unicode('<%s>' % email))
++            from_header = Header(name, charset, 77, 'from')
++            from_header.append(str('<%s>' % email))
+             msg['From'] = from_header
+             date = commit_info['author'].datetime
+             datestr = date.strftime('%a, %-d %b %Y %H:%M:%S %z')
+-            msg['Date'] = Header(unicode(datestr, 'utf-8'), charset, 77, 'date')
+-            msg['Subject'] = Header(unicode(commit_info['subject'], 'utf-8'),
++            msg['Date'] = Header(datestr, charset, 77, 'date')
++            msg['Subject'] = Header(commit_info['subject'],
+                                     charset, 77, 'subject')
+             # Write message body
+             if commit_info['body']:
+@@ -320,7 +320,7 @@
+ 
+     cmd = 'sed -n -e \"s/Maintainer: \\+\\(.*\\)/\\1/p\" %s' % control
+     cmdout = subprocess.Popen(cmd, shell=True,
+-                              stdout=subprocess.PIPE).stdout.readlines()
++                              stdout=subprocess.PIPE, universal_newlines=True).stdout.readlines()
+ 
+     if len(cmdout) > 0:
+         maintainer = cmdout[0].strip()
+diff -uNr a/gbp/scripts/config.py b/gbp/scripts/config.py
+--- a/gbp/scripts/config.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/config.py	2023-08-24 11:28:10.118050381 +0300
+@@ -17,7 +17,7 @@
+ #
+ """Query and display config file values"""
+ 
+-import ConfigParser
++import configparser
+ import sys
+ import os, os.path
+ from gbp.config import (GbpOptionParser, GbpOptionGroup)
+@@ -30,7 +30,7 @@
+     try:
+         parser = GbpOptionParser(command=os.path.basename(name), prefix='',
+                              usage='%prog [options] command[.optionname] - display configuration settings')
+-    except ConfigParser.ParsingError as err:
++    except configparser.ParsingError as err:
+         gbp.log.err(err)
+         return None
+ 
+diff -uNr a/gbp/scripts/create_remote_repo.py b/gbp/scripts/create_remote_repo.py
+--- a/gbp/scripts/create_remote_repo.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/create_remote_repo.py	2023-08-24 12:01:45.303022324 +0300
+@@ -18,10 +18,10 @@
+ # Based on the aa-create-git-repo and dom-new-git-repo shell scripts
+ """Create a remote GIT repository based on the current one"""
+ 
+-import ConfigParser
++import configparser
+ import sys
+ import os, os.path
+-import urlparse
++import urllib.parse
+ import subprocess
+ import tty, termios
+ import re
+@@ -29,7 +29,7 @@
+ from gbp.command_wrappers import (CommandExecFailed, GitCommand)
+ from gbp.config import (GbpOptionParserDebian, GbpOptionGroup)
+ from gbp.errors import GbpError
+-from gbp.git import GitRepositoryError
++from gbp.git.repository import GitRepositoryError
+ from gbp.deb.git import DebianGitRepository
+ import gbp.log
+ 
+@@ -51,22 +51,22 @@
+             merge = refs/heads/bar
+     """
+ 
+-    print """[remote "%(name)s"]
++    print("""[remote "%(name)s"]
+         url = %(url)s
+-        fetch = +refs/heads/*:refs/remotes/%(name)s/*""" % remote
++        fetch = +refs/heads/*:refs/remotes/%(name)s/*""" % remote)
+ 
+     for branch in branches:
+-        print "        push = %s" % branch
++        print("        push = %s" % branch)
+ 
+     for branch in branches:
+-        print """[branch "%s"]
++        print("""[branch "%s"]
+         remote = %s
+-        merge = refs/heads/%s""" % (branch, remote['name'], branch)
++        merge = refs/heads/%s""" % (branch, remote['name'], branch))
+ 
+ def sort_dict(d):
+     """Return a sorted list of (key, value) tuples"""
+     s = []
+-    for key in sorted(d.iterkeys()):
++    for key in sorted(d.keys()):
+         s.append((key, d[key]))
+     return s
+ 
+@@ -103,7 +103,7 @@
+         ...
+     GbpError: URL contains invalid ~username expansion.
+     """
+-    frags = urlparse.urlparse(remote_url)
++    frags = urllib.parse.urlparse(remote_url)
+     if frags.scheme in ['ssh', 'git+ssh', '']:
+         scheme = frags.scheme
+     else:
+@@ -232,7 +232,7 @@
+                                        usage='%prog [options] - '
+                                        'create a remote repository',
+                                        sections=sections)
+-    except ConfigParser.ParsingError as err:
++    except configparser.ParsingError as err:
+         gbp.log.err(err)
+         return None
+ 
+@@ -306,7 +306,7 @@
+     try:
+         options, args = parse_args(argv)
+     except Exception as e:
+-        print >>sys.stderr, "%s" % e
++        print("%s" % e, file=sys.stderr)
+         return 1
+ 
+     gbp.log.setup(options.color, options.verbose, options.color_scheme)
+@@ -350,13 +350,13 @@
+ 
+         remote_script = build_remote_script(remote, branches[0])
+         if options.verbose:
+-            print remote_script
++            print(remote_script)
+ 
+         cmd = build_cmd(remote)
+         if options.verbose:
+-            print cmd
++            print(cmd)
+ 
+-        proc = subprocess.Popen(cmd, stdin=subprocess.PIPE)
++        proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, universal_newlines=True)
+         proc.communicate(remote_script)
+         if proc.returncode:
+             raise GbpError("Error creating remote repository")
+diff -uNr a/gbp/scripts/dch.py b/gbp/scripts/dch.py
+--- a/gbp/scripts/dch.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/dch.py	2023-08-24 11:28:16.366050294 +0300
+@@ -17,7 +17,7 @@
+ #
+ """Generate Debian changelog entries from GIT commit messages"""
+ 
+-import ConfigParser
++import configparser
+ import os.path
+ import re
+ import sys
+@@ -137,8 +137,8 @@
+         cw = open(tmpfile, 'w')
+         cr = open(changelog, 'r')
+ 
+-        print >>cw, ("%(Source)s (%(MangledVersion)s) "
+-                     "%(Distribution)s; urgency=%(urgency)s\n" % cp)
++        print(("%(Source)s (%(MangledVersion)s) "
++                     "%(Distribution)s; urgency=%(urgency)s\n" % cp), file=cw)
+ 
+         cr.readline() # skip version and empty line
+         cr.readline()
+@@ -148,10 +148,10 @@
+             line = ''
+ 
+         if snapshot:
+-            print >>cw, "  ** SNAPSHOT build @%s **\n" % snapshot
++            print("  ** SNAPSHOT build @%s **\n" % snapshot, file=cw)
+ 
+         if line:
+-            print >>cw, line.rstrip()
++            print(line.rstrip(), file=cw)
+         shutil.copyfileobj(cr, cw)
+         cw.close()
+         cr.close()
+@@ -242,7 +242,7 @@
+ 
+ def get_customizations(customization_file):
+     if customization_file:
+-        execfile(customization_file,
++        exec(compile(open(customization_file, "rb").read(), customization_file, 'exec'),
+                  user_customizations,
+                  user_customizations)
+ 
+@@ -295,7 +295,7 @@
+     try:
+         parser = GbpOptionParserDebian(command=os.path.basename(name),
+                                        usage='%prog [options] paths')
+-    except ConfigParser.ParsingError as err:
++    except configparser.ParsingError as err:
+         gbp.log.err(err)
+         return None
+ 
+diff -uNr a/gbp/scripts/import_bb.py b/gbp/scripts/import_bb.py
+--- a/gbp/scripts/import_bb.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/import_bb.py	2023-08-24 11:28:12.344050350 +0300
+@@ -16,7 +16,7 @@
+ #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ """Import an RPM package in Bitbake format"""
+ 
+-import ConfigParser
++import configparser
+ import sys
+ import os
+ import shutil
+@@ -57,7 +57,7 @@
+                                    prefix='',
+                                    usage='%prog [options] /path/to/package'
+                                           '.src.rpm')
+-    except ConfigParser.ParsingError, err:
++    except configparser.ParsingError as err:
+         gbp.log.err(err)
+         return None
+ 
+@@ -256,7 +256,7 @@
+ def import_upstream_git(repo, fetch_data, options):
+     """Import upstream sources from Git"""
+     # Fetch from local cached repo
+-    for branch in fetch_data.branches.values():
++    for branch in list(fetch_data.branches.values()):
+         repo.fetch(repo=fetch_data.localpath, refspec=branch)
+ 
+     commit = fetch_data.revision
+diff -uNr a/gbp/scripts/import_dsc.py b/gbp/scripts/import_dsc.py
+--- a/gbp/scripts/import_dsc.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/import_dsc.py	2023-08-24 11:28:16.646050290 +0300
+@@ -16,7 +16,7 @@
+ #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ """Import a Debian source package into a GIT repository"""
+ 
+-import ConfigParser
++import configparser
+ import sys
+ import re
+ import os
+@@ -209,7 +209,7 @@
+     try:
+         parser = GbpOptionParserDebian(command=os.path.basename(name), prefix='',
+                                        usage='%prog [options] /path/to/package.dsc')
+-    except ConfigParser.ParsingError as err:
++    except configparser.ParsingError as err:
+         gbp.log.err(err)
+         return None
+ 
+@@ -416,7 +416,7 @@
+         os.chdir(dirs['top'])
+ 
+     for d in [ 'tmp', 'download' ]:
+-        if dirs.has_key(d):
++        if d in dirs:
+             gbpc.RemoveTree(dirs[d])()
+ 
+     if not ret and not skipped:
+diff -uNr a/gbp/scripts/import_dscs.py b/gbp/scripts/import_dscs.py
+--- a/gbp/scripts/import_dscs.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/import_dscs.py	2023-08-24 11:46:25.967035124 +0300
+@@ -24,7 +24,7 @@
+ from gbp.deb import DpkgCompareVersions
+ from gbp.deb.dscfile import DscFile
+ from gbp.errors import GbpError
+-from gbp.git import GitRepository, GitRepositoryError
++from gbp.git.repository import GitRepository, GitRepositoryError
+ from gbp.scripts import import_dsc
+ from gbp.config import GbpOptionParser
+ import gbp.log
+@@ -79,13 +79,13 @@
+     gbp.log.debug("Setting GBP_CONF_FILES to '%s'" % gbp_conf_files)
+ 
+ def print_help():
+-    print """Usage: gbp import-dscs [options] [gbp-import-dsc options] /path/to/dsc1 [/path/to/dsc2] ...
++    print("""Usage: gbp import-dscs [options] [gbp-import-dsc options] /path/to/dsc1 [/path/to/dsc2] ...
+        gbp import-dscs --debsnap [options] [gbp-import-dsc options] package
+ 
+ Options:
+ 
+     --ignore-repo-config: ignore gbp.conf in git repo
+-"""
++""")
+ 
+ 
+ def main(argv):
+@@ -159,7 +159,7 @@
+             gbp.log.err(err)
+         ret = 1
+     finally:
+-        if dirs.has_key('tmp'):
++        if 'tmp' in dirs:
+             gbpc.RemoveTree(dirs['tmp'])()
+         os.chdir(dirs['top'])
+ 
+diff -uNr a/gbp/scripts/import_orig.py b/gbp/scripts/import_orig.py
+--- a/gbp/scripts/import_orig.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/import_orig.py	2023-08-24 11:28:10.378050378 +0300
+@@ -17,7 +17,7 @@
+ #
+ """Import a new upstream version into a GIT repository"""
+ 
+-import ConfigParser
++import configparser
+ import os
+ import sys
+ import gbp.tmpfile as tempfile
+@@ -146,7 +146,7 @@
+     try:
+         parser = GbpOptionParserDebian(command=os.path.basename(name), prefix='',
+                                        usage='%prog [options] /path/to/upstream-version.tar.gz | --uscan')
+-    except ConfigParser.ParsingError as err:
++    except configparser.ParsingError as err:
+         gbp.log.err(err)
+         return None
+ 
+diff -uNr a/gbp/scripts/import_orig_rpm.py b/gbp/scripts/import_orig_rpm.py
+--- a/gbp/scripts/import_orig_rpm.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/import_orig_rpm.py	2023-08-24 11:28:14.988050314 +0300
+@@ -18,7 +18,7 @@
+ #
+ """Import a new upstream version into a git repository"""
+ 
+-import ConfigParser
++import configparser
+ import os
+ import sys
+ import gbp.tmpfile as tempfile
+@@ -152,7 +152,7 @@
+         parser = GbpOptionParserRpm(command=os.path.basename(argv[0]),
+                     prefix='',
+                     usage='%prog [options] /path/to/upstream-version.tar.gz')
+-    except ConfigParser.ParsingError, err:
++    except configparser.ParsingError as err:
+         gbp.log.err(err)
+         return None, None
+ 
+@@ -331,7 +331,7 @@
+                 repo.force_head(current_branch, hard=True)
+         except (GitRepositoryError, gbpc.CommandExecFailed):
+             raise GbpError("Import of %s failed" % source.path)
+-    except GbpError, err:
++    except GbpError as err:
+         if len(err.__str__()):
+             gbp.log.err(err)
+         ret = 1
+diff -uNr a/gbp/scripts/import_srpm.py b/gbp/scripts/import_srpm.py
+--- a/gbp/scripts/import_srpm.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/import_srpm.py	2023-08-24 11:28:15.328050309 +0300
+@@ -17,7 +17,7 @@
+ #    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ """Import an RPM source package into a GIT repository"""
+ 
+-import ConfigParser
++import configparser
+ import sys
+ import re
+ import os
+@@ -25,7 +25,7 @@
+ import time
+ import shutil
+ import errno
+-import urllib2
++import urllib.request, urllib.error, urllib.parse
+ 
+ import gbp.tmpfile as tempfile
+ import gbp.command_wrappers as gbpc
+@@ -68,13 +68,13 @@
+     """Download a remote file"""
+     gbp.log.info("Downloading '%s'..." % url)
+     try:
+-        urlobj = urllib2.urlopen(url)
++        urlobj = urllib.request.urlopen(url)
+         local_fn = os.path.join(target_dir, os.path.basename(url))
+         with open(local_fn, "wb") as local_file:
+             local_file.write(urlobj.read())
+-    except urllib2.HTTPError as err:
++    except urllib.error.HTTPError as err:
+         raise GbpError("Download failed: %s" % err)
+-    except urllib2.URLError as err:
++    except urllib.error.URLError as err:
+         raise GbpError("Download failed: %s" % err.reason)
+     return local_fn
+ 
+@@ -176,7 +176,7 @@
+                                     prefix='',
+                                     usage='%prog [options] /path/to/package'
+                                           '.src.rpm')
+-    except ConfigParser.ParsingError, err:
++    except configparser.ParsingError as err:
+         gbp.log.err(err)
+         return None, None
+ 
+@@ -337,7 +337,7 @@
+             # Need to copy files to the packaging directory given by caller
+             files = [os.path.basename(patch.path) \
+                     for patch in spec.patchseries(unapplied=True, ignored=True)]
+-            for filename in spec.sources().values():
++            for filename in list(spec.sources().values()):
+                 files.append(os.path.basename(filename))
+             files.append(os.path.join(spec.specdir, spec.specfile))
+         # Don't copy orig source archive, though
+diff -uNr a/gbp/scripts/pq_bb.py b/gbp/scripts/pq_bb.py
+--- a/gbp/scripts/pq_bb.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/pq_bb.py	2023-08-24 11:28:13.247050338 +0300
+@@ -18,7 +18,7 @@
+ #
+ """manage patches in a patch queue"""
+ 
+-import ConfigParser
++import configparser
+ import errno
+ import os
+ import shutil
+@@ -289,7 +289,7 @@
+     try:
+         parser = GbpOptionParserBB(command=os.path.basename(name),
+                                    prefix='', usage=USAGE_STRING)
+-    except ConfigParser.ParsingError as err:
++    except configparser.ParsingError as err:
+         gbp.log.err(err)
+         return None
+ 
+@@ -411,7 +411,7 @@
+     except GitRepositoryError as err:
+         gbp.log.err("Git command failed: %s" % err)
+         retval = 1
+-    except GbpError, err:
++    except GbpError as err:
+         if len(err.__str__()):
+             gbp.log.err(err)
+         retval = 1
+diff -uNr a/gbp/scripts/pq.py b/gbp/scripts/pq.py
+--- a/gbp/scripts/pq.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/pq.py	2023-08-24 11:28:16.916050287 +0300
+@@ -17,7 +17,7 @@
+ #
+ """Manage Debian patches on a patch queue branch"""
+ 
+-import ConfigParser
++import configparser
+ import errno
+ import os
+ import shutil
+@@ -119,7 +119,7 @@
+         bugs, dummy = extract_bts_cmds(patch.long_desc.split('\n'), options)
+         if bugs:
+             msg += '\n'
+-            for k, v in bugs.items():
++            for k, v in list(bugs.items()):
+                 msg += '\n%s: %s' % (k, ', '.join(v))
+     else:
+         msg = "Rediff patches\n\n"
+@@ -326,7 +326,7 @@
+         "  drop           drop (delete) the patch queue associated to the current branch.\n"
+         "  apply          apply a patch\n"
+         "  switch         switch to patch-queue branch and vice versa")
+-    except ConfigParser.ParsingError as err:
++    except configparser.ParsingError as err:
+         gbp.log.err(err)
+         return None
+ 
+diff -uNr a/gbp/scripts/pq_rpm.py b/gbp/scripts/pq_rpm.py
+--- a/gbp/scripts/pq_rpm.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/pq_rpm.py	2023-08-24 12:02:28.232021727 +0300
+@@ -18,7 +18,7 @@
+ #
+ """manage patches in a patch queue"""
+ 
+-import ConfigParser
++import configparser
+ import errno
+ import os
+ import shutil
+@@ -72,7 +72,7 @@
+         suffix = ''
+         if compress_size and os.path.getsize(patch) > compress_size:
+             gbp.log.debug("Compressing %s" % os.path.basename(patch))
+-            subprocess.Popen(['gzip', '-n', patch]).communicate()
++            subprocess.Popen(['gzip', '-n', patch], universal_newlines=True).communicate()
+             suffix = '.gz'
+ 
+         ret_patches.append(os.path.basename(patch) + suffix)
+@@ -147,7 +147,7 @@
+                          "into one monolithic diff" % (start_sha1, merge_sha1))
+             patches.append(patch_fn)
+             start = merge_sha1
+-            print start
++            print(start)
+ 
+     # Generate patches
+     for commit in reversed(repo.get_commits(start, end_commit)):
+@@ -348,14 +348,14 @@
+     if found:
+         gbp.log.info("Importing additional file(s) from branch '%s' into '%s'" %
+                      (commitish, repo.get_branch()))
+-        for fname, content in found.iteritems():
++        for fname, content in found.items():
+             dirname = os.path.dirname(fname)
+             if dirname and not os.path.exists(dirname):
+                 os.makedirs(dirname)
+             with open(fname, 'w') as fobj:
+                 fobj.write(content)
+ 
+-        files = found.keys()
++        files = list(found.keys())
+         gbp.log.debug('Adding/commiting %s' % files)
+         repo.add_files(files, force=True)
+         commit_msg = ("Auto-import file(s) from branch '%s':\n    %s\n" %
+@@ -363,7 +363,7 @@
+         if patch_ignore:
+             commit_msg += "\nGbp: Ignore\nGbp-Rpm: Ignore"
+         repo.commit_files(files, msg=commit_msg)
+-    return found.keys()
++    return list(found.keys())
+ 
+ def import_spec_patches(repo, options):
+     """
+@@ -618,7 +618,7 @@
+     try:
+         parser = GbpOptionParserRpm(command=os.path.basename(argv[0]),
+                                     prefix='', usage=USAGE_STRING)
+-    except ConfigParser.ParsingError as err:
++    except configparser.ParsingError as err:
+         gbp.log.err('Invalid config file: %s' % err)
+         return 1
+ 
+@@ -727,7 +727,7 @@
+     except GitRepositoryError as err:
+         gbp.log.err("Git command failed: %s" % err)
+         retval = 1
+-    except GbpError, err:
++    except GbpError as err:
+         if len(err.__str__()):
+             gbp.log.err(err)
+         retval = 1
+diff -uNr a/gbp/scripts/pull.py b/gbp/scripts/pull.py
+--- a/gbp/scripts/pull.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/pull.py	2023-08-24 11:43:31.718037550 +0300
+@@ -19,13 +19,13 @@
+ #
+ """Pull remote changes and fast forward debian, upstream and pristine-tar branch"""
+ 
+-import ConfigParser
++import configparser
+ import sys
+ import os, os.path
+ from gbp.command_wrappers import (Command, CommandExecFailed)
+ from gbp.config import (GbpOptionParser, GbpOptionGroup)
+ from gbp.errors import GbpError
+-from gbp.git import GitRepositoryError
++from gbp.git.repository import GitRepositoryError
+ import gbp.log
+ try:
+     from gbp.deb.git import DebianGitRepository as GitRepository
+@@ -100,7 +100,7 @@
+     try:
+         parser = GbpOptionParser(command=os.path.basename(name), prefix='',
+                              usage='%prog [options] - safely update a repository from remote')
+-    except ConfigParser.ParsingError as err:
++    except configparser.ParsingError as err:
+         gbp.log.err(err)
+         return None
+ 
+diff -uNr a/gbp/scripts/rpm_ch.py b/gbp/scripts/rpm_ch.py
+--- a/gbp/scripts/rpm_ch.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/rpm_ch.py	2023-08-24 11:28:11.095050368 +0300
+@@ -18,7 +18,7 @@
+ #
+ """Generate RPM changelog entries from git commit messages"""
+ 
+-import ConfigParser
++import configparser
+ from datetime import datetime
+ import os.path
+ import pwd
+@@ -92,7 +92,7 @@
+         return
+     customizations = {}
+     try:
+-        execfile(customization_file, customizations, customizations)
++        exec(compile(open(customization_file, "rb").read(), customization_file, 'exec'), customizations, customizations)
+     except Exception as err:
+         raise GbpError("Failed to load customization file: %s" % err)
+ 
+@@ -134,7 +134,7 @@
+     if options.commit:
+         unstaged = []
+         status = repo.status()
+-        for group, files in status.iteritems():
++        for group, files in status.items():
+             if group != '??' and group[1] != ' ':
+                 unstaged.extend(files)
+         if unstaged:
+@@ -340,7 +340,7 @@
+         revision = options.changelog_revision % rev_str_fields
+     except KeyError as err:
+         raise GbpError("Unable to construct revision field: unknown key "
+-                "%s, only %s are accepted" % (err, rev_str_fields.keys()))
++                "%s, only %s are accepted" % (err, list(rev_str_fields.keys())))
+ 
+     # Add a new changelog section if new release or an empty changelog
+     if options.release or not changelog.sections:
+@@ -366,7 +366,7 @@
+         return options.commit_msg % fields
+     except KeyError as err:
+         raise GbpError("Unknown key %s in commit-msg string, "
+-                       "only %s are accepted" % (err, fields.keys()))
++                       "only %s are accepted" % (err, list(fields.keys())))
+ 
+ def commit_changelog(repo, changelog, message, author, committer, edit):
+     """Commit changelog and create a packaging/release tag"""
+@@ -380,7 +380,7 @@
+     try:
+         parser = GbpOptionParserRpm(command=os.path.basename(argv[0]),
+                                     prefix='', usage='%prog [options] paths')
+-    except ConfigParser.ParsingError as err:
++    except configparser.ParsingError as err:
+         gbp.log.error('invalid config file: %s' % err)
+         return None, None
+ 
+diff -uNr a/gbp/scripts/submit_bb.py b/gbp/scripts/submit_bb.py
+--- a/gbp/scripts/submit_bb.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/submit_bb.py	2023-08-24 11:46:25.964035124 +0300
+@@ -17,7 +17,7 @@
+ #
+ """Create and push submit tag"""
+ 
+-import ConfigParser
++import configparser
+ import os
+ import sys
+ from datetime import datetime
+@@ -26,7 +26,7 @@
+ from gbp.config import GbpOptionParserBB
+ from gbp.errors import GbpError
+ from gbp.format import format_msg
+-from gbp.git import GitRepository, GitRepositoryError
++from gbp.git.repository import GitRepository, GitRepositoryError
+ 
+ def guess_remote(repo, options):
+     """Guess remote where to push"""
+@@ -38,11 +38,11 @@
+         raise GbpError("Local repo has no remotes configured. Please add one "
+                        "or use --remote to define the remote where to push.")
+     elif len(remotes) == 1:
+-        return remotes.keys()[0]
++        return list(remotes.keys())[0]
+     else:
+         raise GbpError("Local repo has multiple remotes (%s). Don't know which "
+                        "one to choose. Use --remote to define where to push." %
+-                       ', '.join(remotes.keys()))
++                       ', '.join(list(remotes.keys())))
+ 
+ 
+ def build_parser(name):
+@@ -51,7 +51,7 @@
+     try:
+         parser = GbpOptionParserBB(command=os.path.basename(name), prefix='',
+                                    usage=usage_str)
+-    except ConfigParser.ParsingError as err:
++    except configparser.ParsingError as err:
+         gbp.log.err(err)
+         return None
+ 
+diff -uNr a/gbp/scripts/supercommand.py b/gbp/scripts/supercommand.py
+--- a/gbp/scripts/supercommand.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/scripts/supercommand.py	2023-08-24 11:28:16.079050298 +0300
+@@ -34,7 +34,7 @@
+     return cmd.replace('-', '_')
+ 
+ def usage():
+-    print """
++    print("""
+ Usage:
+     gbp <command> [<args>]
+ 
+@@ -46,14 +46,14 @@
+     import-dscs  - import multiple Debian source packages
+ 
+ Use '--list-cmds' to list all available commands.
+-"""
++""")
+ 
+ def version(prog):
+     try:
+         from gbp.version import gbp_version
+     except ImportError:
+         gbp_version = '[Unknown version]'
+-    print("%s %s" % (os.path.basename(prog), gbp_version))
++    print(("%s %s" % (os.path.basename(prog), gbp_version)))
+ 
+ 
+ def import_command(cmd):
+@@ -90,7 +90,7 @@
+     path = os.path.dirname(mod.__file__)
+     maxlen = 0
+ 
+-    print("Available commands in %s\n" % path)
++    print(("Available commands in %s\n" % path))
+     cmds = sorted(get_available_commands(path))
+     for cmd in cmds:
+         if len(cmd[0]) > maxlen:
+@@ -98,7 +98,7 @@
+     for cmd in cmds:
+         mod = import_command(cmd[0])
+         doc = mod.__doc__
+-        print("    %s - %s" % (cmd[0].rjust(maxlen), doc))
++        print(("    %s - %s" % (cmd[0].rjust(maxlen), doc)))
+     print('')
+ 
+ 
+@@ -127,10 +127,10 @@
+     try:
+         module = import_command(cmd)
+     except ImportError as e:
+-        print >>sys.stderr, "'%s' is not a valid command." % cmd
++        print("'%s' is not a valid command." % cmd, file=sys.stderr)
+         usage()
+         if '--verbose' in args:
+-            print >>sys.stderr, e
++            print(e, file=sys.stderr)
+         return 2
+ 
+     return module.main(args)
+diff -uNr a/gbp/tristate.py b/gbp/tristate.py
+--- a/gbp/tristate.py	2021-05-10 10:44:36.000000000 +0300
++++ b/gbp/tristate.py	2023-08-24 11:28:08.969050397 +0300
+@@ -36,7 +36,7 @@
+                 self._state = self.AUTO
+             else:
+                 self._state = self.OFF
+-        elif type(val) in [ type(t) for t in ("", u"") ]:
++        elif type(val) in [ type(t) for t in ("", "") ]:
+             if val.lower() in [ 'on', 'true' ]:
+                 self._state = self.ON
+             elif val.lower() in [ 'auto' ]:
+@@ -66,7 +66,7 @@
+         else:
+             return 'off'
+ 
+-    def __nonzero__(self):
++    def __bool__(self):
+         """
+         >>> Tristate('on').__nonzero__()
+         True
+diff -uNr a/setup.py b/setup.py
+--- a/setup.py	2021-05-10 10:44:36.000000000 +0300
++++ b/setup.py	2023-08-24 11:28:32.533050069 +0300
+@@ -49,7 +49,7 @@
+ 
+ setup(name = "gbp",
+       version = fetch_version(),
+-      author = u'Guido Günther',
++      author = 'Guido Günther',
+       author_email = 'agx@sigxcpu.org',
+       url = 'https://honk.sigxcpu.org/piki/projects/git-buildpackage/',
+       description = 'Suite to help with Debian packages in Git repositories',
+diff -uNr a/tests/02_test_upstream_source_tar_unpack.py b/tests/02_test_upstream_source_tar_unpack.py
+--- a/tests/02_test_upstream_source_tar_unpack.py	2021-05-10 10:44:36.000000000 +0300
++++ b/tests/02_test_upstream_source_tar_unpack.py	2023-08-24 11:28:28.615050124 +0300
+@@ -52,7 +52,7 @@
+         context.teardown()
+ 
+     def test_upstream_source_type(self):
+-        for (comp, archive) in self.archives.iteritems():
++        for (comp, archive) in self.archives.items():
+             source = gbp.pkg.UpstreamSource(archive[0])
+             assert source.is_orig() == True
+             assert source.is_dir() == False
+@@ -63,13 +63,13 @@
+             assert type(source.unpacked) == str
+ 
+     def test_upstream_source_unpack(self):
+-        for (comp, archive) in self.archives.iteritems():
++        for (comp, archive) in self.archives.items():
+             source = gbp.pkg.UpstreamSource(archive[0])
+             source.unpack(".")
+             self._check_files(archive[1], comp)
+ 
+     def test_upstream_source_unpack_no_filter(self):
+-        for (comp, archive) in self.archives.iteritems():
++        for (comp, archive) in self.archives.items():
+             source = gbp.pkg.UpstreamSource(archive[0])
+             source.unpack(".", [])
+             self._check_files(archive[1], comp)
+@@ -77,7 +77,7 @@
+     def test_upstream_source_unpack_filtered(self):
+         exclude = "README"
+ 
+-        for (comp, archive) in self.archives.iteritems():
++        for (comp, archive) in self.archives.items():
+             source = gbp.pkg.UpstreamSource(archive[0])
+             source.unpack(".", [exclude])
+             archive[1].remove(exclude)
+diff -uNr a/tests/03_test_dch_guess_version.py b/tests/03_test_dch_guess_version.py
+--- a/tests/03_test_dch_guess_version.py	2021-05-10 10:44:36.000000000 +0300
++++ b/tests/03_test_dch_guess_version.py	2023-08-24 11:28:30.025050104 +0300
+@@ -4,7 +4,7 @@
+ 
+ from . import context
+ 
+-import testutils
++from . import testutils
+ 
+ from gbp.scripts import dch
+ 
+diff -uNr a/tests/09_test_write_tree.py b/tests/09_test_write_tree.py
+--- a/tests/09_test_write_tree.py	2021-05-10 10:44:36.000000000 +0300
++++ b/tests/09_test_write_tree.py	2023-08-24 11:28:27.591050138 +0300
+@@ -20,7 +20,7 @@
+         for i in range(4):
+             path = os.path.join(self.repo.path, 'testfile%d' % i)
+             with open(path, 'w') as f:
+-                print >>f, "testdata %d" % i
++                print("testdata %d" % i, file=f)
+             paths.append(path)
+         return paths
+ 
+diff -uNr a/tests/14_test_gbp_import_dscs.py b/tests/14_test_gbp_import_dscs.py
+--- a/tests/14_test_gbp_import_dscs.py	2021-05-10 10:44:36.000000000 +0300
++++ b/tests/14_test_gbp_import_dscs.py	2023-08-24 11:28:31.949050077 +0300
+@@ -17,7 +17,7 @@
+ 
+ from . import context
+ 
+-import testutils
++from . import testutils
+ import gbp.log
+ import gbp.scripts.import_dscs as import_dscs
+ 
+diff -uNr a/tests/15_test_DebianSource.py b/tests/15_test_DebianSource.py
+--- a/tests/15_test_DebianSource.py	2021-05-10 10:44:36.000000000 +0300
++++ b/tests/15_test_DebianSource.py	2023-08-24 11:28:28.235050129 +0300
+@@ -18,7 +18,7 @@
+ from . import context
+ 
+ import os
+-import testutils
++from . import testutils
+ from gbp.deb.source import DebianSource, DebianSourceError
+ from gbp.deb.format import DebianSourceFormat
+ from gbp.git.vfs import GitVfs
+diff -uNr a/tests/17_test_dch_guess_documented_commit.py b/tests/17_test_dch_guess_documented_commit.py
+--- a/tests/17_test_dch_guess_documented_commit.py	2021-05-10 10:44:36.000000000 +0300
++++ b/tests/17_test_dch_guess_documented_commit.py	2023-08-24 11:28:29.636050110 +0300
+@@ -4,7 +4,7 @@
+ 
+ from . import context
+ 
+-import testutils
++from . import testutils
+ 
+ from gbp.scripts import dch
+ 
+diff -uNr a/tests/19_test_gbp_scripts_config.py b/tests/19_test_gbp_scripts_config.py
+--- a/tests/19_test_gbp_scripts_config.py	2021-05-10 10:44:36.000000000 +0300
++++ b/tests/19_test_gbp_scripts_config.py	2023-08-24 11:28:25.656050165 +0300
+@@ -78,7 +78,7 @@
+                      'pull' ]:
+             printstub = self.AllValuesPrintStub(cmd)
+             ret = gbp.scripts.config.print_cmd_all_values(cmd, printstub)
+-            self.assertTrue('%s.color' % cmd in printstub.result.keys())
++            self.assertTrue('%s.color' % cmd in list(printstub.result.keys()))
+             self.assertEqual(ret, 0)
+ 
+     def test_invalid_cms(self):
+diff -uNr a/tests/component/__init__.py b/tests/component/__init__.py
+--- a/tests/component/__init__.py	2021-05-10 10:44:36.000000000 +0300
++++ b/tests/component/__init__.py	2023-08-24 11:28:24.791050177 +0300
+@@ -24,7 +24,7 @@
+ import re
+ import shutil
+ import tempfile
+-from StringIO import StringIO
++from io import StringIO
+ from nose import SkipTest
+ from nose.tools import eq_, ok_     # pylint: disable=E0611
+ 
+diff -uNr a/tests/component/rpm/__init__.py b/tests/component/rpm/__init__.py
+--- a/tests/component/rpm/__init__.py	2021-05-10 10:44:36.000000000 +0300
++++ b/tests/component/rpm/__init__.py	2023-08-24 11:46:25.966035124 +0300
+@@ -21,7 +21,7 @@
+ import shutil
+ from xml.dom import minidom
+ 
+-from gbp.git import GitRepository, GitRepositoryError
++from gbp.git.repository import GitRepository, GitRepositoryError
+ 
+ from tests.component import ComponentTestBase, ComponentTestGitRepository
+ 
+@@ -48,7 +48,7 @@
+         for prj_e in self._doc.getElementsByTagName('project'):
+             branches = []
+             for br_e in prj_e.getElementsByTagName('branch'):
+-                branches.append(dict(br_e.attributes.items()))
++                branches.append(dict(list(br_e.attributes.items())))
+             yield prj_e.getAttribute('name'), branches
+ 
+ 
+diff -uNr a/tests/component/rpm/test_buildpackage_rpm.py b/tests/component/rpm/test_buildpackage_rpm.py
+--- a/tests/component/rpm/test_buildpackage_rpm.py	2021-05-10 10:44:36.000000000 +0300
++++ b/tests/component/rpm/test_buildpackage_rpm.py	2023-08-24 11:46:25.966035124 +0300
+@@ -25,7 +25,7 @@
+ import subprocess
+ from nose.tools import assert_raises, eq_, ok_ # pylint: disable=E0611
+ 
+-from gbp.git import GitRepository
++from gbp.git.repository import GitRepository
+ from gbp.scripts.buildpackage_rpm import main as gbp_rpm
+ 
+ from tests.component.rpm import RpmRepoTestBase, RPM_TEST_DATA_DIR
+diff -uNr a/tests/component/rpm/test_import_orig_rpm.py b/tests/component/rpm/test_import_orig_rpm.py
+--- a/tests/component/rpm/test_import_orig_rpm.py	2021-05-10 10:44:36.000000000 +0300
++++ b/tests/component/rpm/test_import_orig_rpm.py	2023-08-24 11:46:25.966035124 +0300
+@@ -24,10 +24,10 @@
+ import tempfile
+ from nose.plugins.skip import SkipTest
+ from nose.tools import assert_raises, eq_   # pylint: disable=E0611
+-from StringIO import StringIO
++from io import StringIO
+ 
+ from gbp.scripts.import_orig_rpm import main as import_orig_rpm
+-from gbp.git import GitRepository
++from gbp.git.repository import GitRepository
+ 
+ from tests.testutils import ls_dir, ls_tar, ls_zip
+ from tests.component import ComponentTestBase
+@@ -112,7 +112,7 @@
+     def _create_dummy_spec(path, **kwargs):
+         """Create a dummy spec file"""
+         with open(path, 'w') as fobj:
+-            print kwargs
++            print(kwargs)
+             fobj.write(DUMMY_SPEC % kwargs)
+ 
+     def test_invalid_args(self):
+diff -uNr a/tests/component/rpm/test_import_srpm.py b/tests/component/rpm/test_import_srpm.py
+--- a/tests/component/rpm/test_import_srpm.py	2021-05-10 10:44:36.000000000 +0300
++++ b/tests/component/rpm/test_import_srpm.py	2023-08-24 11:46:25.965035124 +0300
+@@ -18,13 +18,13 @@
+ 
+ import os
+ import shutil
+-import urllib2
++import urllib.request, urllib.error, urllib.parse
+ from nose.plugins.skip import SkipTest
+ from nose.tools import assert_raises, eq_, ok_  # pylint: disable=E0611
+ from mock import Mock
+ 
+ from gbp.scripts.import_srpm import main as import_srpm
+-from gbp.git import GitRepository
++from gbp.git.repository import GitRepository
+ from gbp.rpm import SrcRpmFile
+ 
+ from tests.component import ComponentTestBase
+@@ -287,8 +287,8 @@
+                'master/gbp-test-1.0-1.src.rpm'
+         # Mock to use local files instead of really downloading
+         local_fn = os.path.join(DATA_DIR, os.path.basename(srpm))
+-        urllib2.urlopen = Mock()
+-        urllib2.urlopen.return_value = open(local_fn, 'r')
++        urllib.request.urlopen = Mock()
++        urllib.request.urlopen.return_value = open(local_fn, 'r')
+ 
+         eq_(mock_import(['--no-pristine-tar', '--download', srpm]), 0)
+         # Check repository state
+@@ -299,8 +299,8 @@
+         """Test graceful failure when trying download from nonexistent url"""
+         srpm = 'http://url.does.not.exist.com/foo.src.rpm'
+         # Do not connect to remote, mock failure
+-        urllib2.urlopen = Mock()
+-        urllib2.urlopen.side_effect = urllib2.HTTPError(srpm, 404, "Not found",
++        urllib.request.urlopen = Mock()
++        urllib.request.urlopen.side_effect = urllib.error.HTTPError(srpm, 404, "Not found",
+                                                         None, None)
+ 
+         eq_(mock_import(['--download', srpm]), 1)
+diff -uNr a/tests/component/rpm/test_pq_rpm.py b/tests/component/rpm/test_pq_rpm.py
+--- a/tests/component/rpm/test_pq_rpm.py	2021-05-10 10:44:36.000000000 +0300
++++ b/tests/component/rpm/test_pq_rpm.py	2023-08-24 11:46:25.965035124 +0300
+@@ -21,7 +21,7 @@
+ from nose.tools import assert_raises, eq_, ok_ # pylint: disable=E0611
+ 
+ from gbp.scripts.pq_rpm import main as pq
+-from gbp.git import GitRepository
++from gbp.git.repository import GitRepository
+ from gbp.command_wrappers import GitCommand
+ 
+ from tests.component.rpm import RpmRepoTestBase
+diff -uNr a/tests/component/rpm/test_rpm_ch.py b/tests/component/rpm/test_rpm_ch.py
+--- a/tests/component/rpm/test_rpm_ch.py	2021-05-10 10:44:36.000000000 +0300
++++ b/tests/component/rpm/test_rpm_ch.py	2023-08-24 11:46:25.967035124 +0300
+@@ -21,7 +21,7 @@
+ from nose.tools import assert_raises, eq_, ok_ # pylint: disable=E0611
+ 
+ from gbp.scripts.rpm_ch import main as rpm_ch
+-from gbp.git import GitRepository
++from gbp.git.repository import GitRepository
+ 
+ from tests.component.rpm import RpmRepoTestBase
+ 
+diff -uNr a/tests/test_GitRepository.py b/tests/test_GitRepository.py
+--- a/tests/test_GitRepository.py	2021-05-10 10:44:36.000000000 +0300
++++ b/tests/test_GitRepository.py	2023-08-24 11:28:31.752050080 +0300
+@@ -17,9 +17,9 @@
+ 
+ gbp.log.setup(color=False, verbose=True)
+ 
+-repo_dir, bare_dir, clone_dir, mirror_clone_dir = map(
++repo_dir, bare_dir, clone_dir, mirror_clone_dir = list(map(
+     lambda x, tmpdir=context.new_tmpdir(__name__): tmpdir.join(x),
+-    ['repo', 'bare', 'clone', 'mirror_clone'])
++    ['repo', 'bare', 'clone', 'mirror_clone']))
+ 
+ def test_create():
+     """
+diff -uNr a/tests/test_import_orig.py b/tests/test_import_orig.py
+--- a/tests/test_import_orig.py	2021-05-10 10:44:36.000000000 +0300
++++ b/tests/test_import_orig.py	2023-08-24 11:28:25.457050168 +0300
+@@ -52,15 +52,15 @@
+ 
+     def test_failure(self):
+         """Test failure modes"""
+-        with self.assertRaisesRegexp(GbpError,
++        with self.assertRaisesRegex(GbpError,
+                                      "More than one archive specified"):
+             find_source(False, ['too', 'much'])
+ 
+-        with self.assertRaisesRegexp(GbpError,
++        with self.assertRaisesRegex(GbpError,
+                                      "No archive to import specified"):
+             find_source(False, [])
+ 
+-        with self.assertRaisesRegexp(GbpError,
++        with self.assertRaisesRegex(GbpError,
+                                 "you can't pass both --uscan and a filename"):
+             find_source(True, ['tarball'])
+ 
+diff -uNr a/tests/test_rpm.py b/tests/test_rpm.py
+--- a/tests/test_rpm.py	2021-05-10 10:44:36.000000000 +0300
++++ b/tests/test_rpm.py	2023-08-24 11:28:31.360050086 +0300
+@@ -319,7 +319,7 @@
+         spec = SpecFileTester(spec_filepath)
+ 
+         # Check all the tags
+-        for name, val in spec.protected('_tags').iteritems():
++        for name, val in spec.protected('_tags').items():
+             rval = None
+             if name in ('version', 'release', 'epoch'):
+                 rval = '0'

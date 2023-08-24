@@ -1,0 +1,730 @@
+diff -uNr a/bsr/bsr/analyzer/data_analyzer.py b/bsr/bsr/analyzer/data_analyzer.py
+--- a/bsr/bsr/analyzer/data_analyzer.py	2023-05-10 10:34:22.000000000 +0300
++++ b/bsr/bsr/analyzer/data_analyzer.py	2023-08-23 16:56:06.349979364 +0300
+@@ -124,7 +124,7 @@
+             for package in self.topology_sorted[level]:
+                 for dep in self.edges[package]:
+                     count_link[package][dep] = 1
+-                    zipped = zip(count_link[package], count_link[dep])
++                    zipped = list(zip(count_link[package], count_link[dep]))
+                     count_link[package] = list(starmap(or_, zipped))
+ 
+         self.count_link_map = count_link
+@@ -190,7 +190,7 @@
+                     console('{} does not exists in the top order'.format(package), verbose=True)
+ 
+         # [[pkg1, 39], [pkg2, 21], [pkg2, 7], ...]
+-        top_links_order = sorted(top_links_order.items(), key=lambda x: x[1], reverse=True)
++        top_links_order = sorted(list(top_links_order.items()), key=lambda x: x[1], reverse=True)
+ 
+         console('Total #{} items...'.format(len(top_links_order)), verbose=self.verbose)
+ 
+diff -uNr a/bsr/bsr/gbs/gbs_actions.py b/bsr/bsr/gbs/gbs_actions.py
+--- a/bsr/bsr/gbs/gbs_actions.py	2023-05-10 10:34:22.000000000 +0300
++++ b/bsr/bsr/gbs/gbs_actions.py	2023-08-23 16:56:08.732979331 +0300
+@@ -19,7 +19,7 @@
+ import shutil
+ 
+ try:
+-    from ConfigParser import SafeConfigParser
++    from configparser import SafeConfigParser
+ except ImportError:
+     from configparser import SafeConfigParser
+ 
+diff -uNr a/bsr/bsr/network/dep_parse.py b/bsr/bsr/network/dep_parse.py
+--- a/bsr/bsr/network/dep_parse.py	2023-05-10 10:34:22.000000000 +0300
++++ b/bsr/bsr/network/dep_parse.py	2023-08-23 16:56:05.735979372 +0300
+@@ -91,7 +91,7 @@
+                         edges.add(short_item)
+         level = level + 1
+ 
+-    for src_pkg, dst_pkgs in cycle_edges.items():
++    for src_pkg, dst_pkgs in list(cycle_edges.items()):
+         for dst_pkg in dst_pkgs:
+             if src_pkg in nodes and dst_pkg in nodes:
+                 edges.add((src_pkg, dst_pkg, 'true'))
+@@ -110,7 +110,7 @@
+                 if dst_pkg in nodes:
+                     edges.add((pkg, dst_pkg, 'false'))
+ 
+-    for src_pkg, dst_pkgs in cycle_edges.items():
++    for src_pkg, dst_pkgs in list(cycle_edges.items()):
+         for dst_pkg in dst_pkgs:
+             if src_pkg in nodes and dst_pkg in nodes:
+                 edges.add((src_pkg, dst_pkg, 'true'))
+@@ -154,7 +154,7 @@
+ 
+     # compensate nodes.
+     # if a node is in cycle_edges, insert it into the nodes.
+-    for src, dst_pkgs in cycle_edges.items():
++    for src, dst_pkgs in list(cycle_edges.items()):
+         if src not in nodes:
+             continue
+         for dst_pkg in dst_pkgs:
+@@ -183,7 +183,7 @@
+ 
+     # If it is a main package, we cannot find it in sub_main_pkg.
+     # In this case, just return the package name
+-    if sub_pkg_name in share_var.main_sub_pkg.keys():
++    if sub_pkg_name in list(share_var.main_sub_pkg.keys()):
+         return sub_pkg_name
+ 
+     if not sub_pkg_name in share_var.sub_main_pkg:
+@@ -200,8 +200,8 @@
+     share_var.main_sub_pkg[pkg_name].append(sub_pkg_name)
+ 
+     if sub_pkg_name in share_var.sub_main_pkg:
+-        print('Subpackage ' + sub_pkg_name + ' is related to one or more main ' + 'packages(' \
+-              + share_var.sub_main_pkg[sub_pkg_name] + ',' + pkg_name + ')!\n')
++        print(('Subpackage ' + sub_pkg_name + ' is related to one or more main ' + 'packages(' \
++              + share_var.sub_main_pkg[sub_pkg_name] + ',' + pkg_name + ')!\n'))
+     share_var.sub_main_pkg[sub_pkg_name] = pkg_name
+ 
+     share_var.pkg_print_index[sub_pkg_name] = 0
+@@ -240,7 +240,7 @@
+         for dst in dst_pkgs:
+             if dst in path:
+                 # cycle!
+-                print("removing cycle (" + node + "->" + dst + ")")
++                print(("removing cycle (" + node + "->" + dst + ")"))
+                 if node not in cycle_edges:
+                     cycle_edges[node] = set()
+                 cycle_edges[node].add(dst)
+@@ -250,7 +250,7 @@
+                 visit(level + 1, dst)
+         path.remove(node)
+ 
+-    for pkg in main_pkg_edges.keys():
++    for pkg in list(main_pkg_edges.keys()):
+         visit(0, pkg)
+ 
+     return main_pkg_edges, cycle_edges, full_in_edge_count
+@@ -398,7 +398,7 @@
+     main_pkg_reverse_edges = {}
+     full_in_reverse_edge_count = {}
+     # generate main_pkg_edges using sub_pkg_edges
+-    for src, dst_pkgs in share_var.sub_pkg_edges.items():
++    for src, dst_pkgs in list(share_var.sub_pkg_edges.items()):
+         src_main = find_main_package_name(src, share_var)
+         if src_main is None:
+             continue
+diff -uNr a/bsr/bsr/utility/utils.py b/bsr/bsr/utility/utils.py
+--- a/bsr/bsr/utility/utils.py	2023-05-10 10:34:22.000000000 +0300
++++ b/bsr/bsr/utility/utils.py	2023-08-23 16:56:09.304979323 +0300
+@@ -30,8 +30,8 @@
+     import http.server
+     import socketserver
+ except ImportError:
+-    import SimpleHTTPServer
+-    import SocketServer
++    import http.server
++    import socketserver
+ 
+ from datetime import datetime, timedelta
+ 
+@@ -39,7 +39,7 @@
+ def console(text, level='INFO', verbose=False):
+     """logging wrapper"""
+     if verbose is True:
+-        print('[{}] {}'.format(level, text))
++        print(('[{}] {}'.format(level, text)))
+         sys.stdout.flush()
+ 
+ 
+@@ -242,8 +242,8 @@
+             handler = http.server.SimpleHTTPRequestHandler
+             httpd = socketserver.TCPServer(("", port), handler)
+         except NameError:
+-            handler = SimpleHTTPServer.SimpleHTTPRequestHandler
++            handler = http.server.SimpleHTTPRequestHandler
+             handler.extensions_map.update({'.webapp': 'application/x-web-app-manifest+json'})
+-            httpd = SocketServer.TCPServer(("", port), handler)
++            httpd = socketserver.TCPServer(("", port), handler)
+         httpd.allow_reuse_address = True
+         httpd.serve_forever()
+diff -uNr a/bsr/bsr/__version__.py b/bsr/bsr/__version__.py
+--- a/bsr/bsr/__version__.py	2023-05-10 10:34:22.000000000 +0300
++++ b/bsr/bsr/__version__.py	2023-08-23 16:56:08.910979328 +0300
+@@ -9,4 +9,4 @@
+ __author_email__ = 'hyokeun.jeon@samsung.com'
+ __license__ = 'Apache 2.0'
+ __copyright__ = 'Copyright 2020 Samsung Research'
+-__cake__ = u'\u2728 \U0001f370 \u2728'
++__cake__ = '\u2728 \U0001f370 \u2728'
+diff -uNr a/gitbuildsys/cmd_build.py b/gitbuildsys/cmd_build.py
+--- a/gitbuildsys/cmd_build.py	2023-05-10 10:34:22.000000000 +0300
++++ b/gitbuildsys/cmd_build.py	2023-08-23 17:20:54.310958647 +0300
+@@ -23,7 +23,7 @@
+ import shutil
+ import pwd
+ import re
+-import urlparse
++import urllib.parse
+ import glob
+ import gzip
+ import requests
+@@ -142,7 +142,7 @@
+     if args.repositories:
+         for repo in args.repositories:
+             try:
+-                if not urlparse.urlsplit(repo).scheme:
++                if not urllib.parse.urlsplit(repo).scheme:
+                     if os.path.exists(repo):
+                         repo = os.path.abspath(os.path.expanduser(repo))
+                     else:
+@@ -430,7 +430,7 @@
+ 
+     content += '[general]\nfallback_to_native = true\nprofile = ' + default + '\n'
+     repos_map = {}
+-    for k, v in obs_meta.iteritems():
++    for k, v in obs_meta.items():
+         ref_id = ref_meta.get(v)
+         if ref_id == None:
+             ref_id = 'latest'
+@@ -467,7 +467,7 @@
+             content += '[repo.' + k + '_' + repo + '_pkgs]\n'
+             content += 'url = ' + url + '/builddata/depends/' + v + '_' + repo + '_' + arch + '_revpkgdepends.xml\n'
+ 
+-    for k, v in profile_meta.iteritems():
++    for k, v in profile_meta.items():
+         content += '[profile.' + k + ']\n'
+         if full_build:
+             v = v[:v.index('repo.' + k) - 1]
+@@ -490,7 +490,7 @@
+     content += '[obs.tizen]\nurl = https://build.tizen.org\nuser = obs_viewer\npasswd = obs_viewer\n'
+ 
+     fpath = os.path.expanduser('~/.gbs.conf.auto')
+-    with open(fpath, 'w') as wfile:
++    with open(fpath, 'wb') as wfile:
+         wfile.write(content)
+ 
+     configmgr.add_conf(fpath)
+@@ -510,8 +510,8 @@
+ 
+     out_file = path + '/.repo/manifests/unified_standard.xml.new'
+     in_file = path + '/.repo/manifests/unified_standard.xml'
+-    with open(out_file, 'w') as f:
+-        with open(in_file, 'r') as i:
++    with open(out_file, 'wb') as f:
++        with open(in_file, 'rb') as i:
+             for line in i.readlines():
+                 if 'metadata.xml' not in line and 'prebuilt.xml' not in line:
+                     f.write(line)
+@@ -524,7 +524,7 @@
+ 
+     old = path + '/.repo/manifests/unified/standard/projects.xml'
+     new = path + '/.repo/manifests/unified/standard/projects.xml.new'
+-    with open(new, "w") as f:
++    with open(new, "wb") as f:
+         f.write(r.content)
+ 
+     log.info('use %s as projects.xml' %manifest_url)
+diff -uNr a/gitbuildsys/cmd_depends.py b/gitbuildsys/cmd_depends.py
+--- a/gitbuildsys/cmd_depends.py	2023-05-10 10:34:22.000000000 +0300
++++ b/gitbuildsys/cmd_depends.py	2023-08-23 16:50:30.925984034 +0300
+@@ -22,7 +22,7 @@
+ import shutil
+ import pwd
+ import re
+-import urlparse
++import urllib.parse
+ import glob
+ import requests
+ import subprocess
+@@ -81,7 +81,7 @@
+     if args.repositories:
+         for repo in args.repositories:
+             try:
+-                if not urlparse.urlsplit(repo).scheme:
++                if not urllib.parse.urlsplit(repo).scheme:
+                     if os.path.exists(repo):
+                         repo = os.path.abspath(os.path.expanduser(repo))
+                     else:
+diff -uNr a/gitbuildsys/cmd_devel.py b/gitbuildsys/cmd_devel.py
+--- a/gitbuildsys/cmd_devel.py	2023-05-10 10:34:22.000000000 +0300
++++ b/gitbuildsys/cmd_devel.py	2023-08-23 16:50:30.950984033 +0300
+@@ -68,8 +68,8 @@
+     log.info('Updating local .gbs.conf')
+     with open(conf_fn, 'a+') as conf_fp:
+         parser.readfp(conf_fp)
+-    for section, items in values.iteritems():
+-        for key, value in items.iteritems():
++    for section, items in values.items():
++        for key, value in items.items():
+             parser.set_into_file(section, key, value)
+     parser.update()
+ 
+diff -uNr a/gitbuildsys/cmd_export.py b/gitbuildsys/cmd_export.py
+--- a/gitbuildsys/cmd_export.py	2023-05-10 10:34:22.000000000 +0300
++++ b/gitbuildsys/cmd_export.py	2023-08-23 16:50:31.014984033 +0300
+@@ -24,7 +24,7 @@
+ import shutil
+ import glob
+ import errno
+-from urlparse import urlparse
++from urllib.parse import urlparse
+ 
+ from gitbuildsys import utils
+ from gitbuildsys.conf import configmgr
+@@ -122,7 +122,7 @@
+     reponame = ""
+     remotes = repo.get_remote_repos()
+     if remotes:
+-        remotename = 'origin' if 'origin' in remotes else remotes.keys()[0]
++        remotename = 'origin' if 'origin' in remotes else list(remotes.keys())[0]
+         # Take the remote repo of current branch, if available
+         try:
+             config_remote = repo.get_config('branch.%s.remote' % repo.branch)
+diff -uNr a/gitbuildsys/cmd_remotebuild.py b/gitbuildsys/cmd_remotebuild.py
+--- a/gitbuildsys/cmd_remotebuild.py	2023-05-10 10:34:22.000000000 +0300
++++ b/gitbuildsys/cmd_remotebuild.py	2023-08-23 16:50:31.095984031 +0300
+@@ -160,11 +160,11 @@
+             archlist = []
+             status = api.get_results(target_prj, package)
+ 
+-            for build_repo in status.keys():
++            for build_repo in list(status.keys()):
+                 for arch in status[build_repo]:
+                     archlist.append('%-15s%-15s' % (build_repo, arch))
+-            if not obs_repo or not obs_arch or obs_repo not in status.keys() \
+-                   or obs_arch not in status[obs_repo].keys():
++            if not obs_repo or not obs_arch or obs_repo not in list(status.keys()) \
++                   or obs_arch not in list(status[obs_repo].keys()):
+                 raise GbsError('no valid repo / arch specified for buildlog, '\
+                                'valid arguments of repo and arch are:\n%s' % \
+                                '\n'.join(archlist))
+@@ -175,7 +175,7 @@
+                                                   status[obs_repo][obs_arch]))
+             log.info('build log for %s/%s/%s/%s' % (target_prj, package,
+                                                     obs_repo, obs_arch))
+-            print(api.get_buildlog(target_prj, package, obs_repo, obs_arch))
++            print((api.get_buildlog(target_prj, package, obs_repo, obs_arch)))
+ 
+             return 0
+ 
+@@ -184,7 +184,7 @@
+ 
+             status = api.get_results(target_prj, package)
+ 
+-            for build_repo in status.keys():
++            for build_repo in list(status.keys()):
+                 for arch in status[build_repo]:
+                     stat = status[build_repo][arch]
+                     results.append('%-15s%-15s%-15s' % (build_repo, arch, stat))
+diff -uNr a/gitbuildsys/conf.py b/gitbuildsys/conf.py
+--- a/gitbuildsys/conf.py	2023-05-10 10:34:22.000000000 +0300
++++ b/gitbuildsys/conf.py	2023-08-23 17:15:03.677963529 +0300
+@@ -19,13 +19,14 @@
+ Provides classes and functions to read and write gbs.conf.
+ '''
+ 
+-from __future__ import with_statement
++
+ import os
+ import re
+ import base64
++import bz2
+ import shutil
+ from collections import namedtuple
+-from ConfigParser import SafeConfigParser,  \
++from configparser import SafeConfigParser,  \
+                          MissingSectionHeaderError, Error
+ 
+ from gitbuildsys import errors
+@@ -35,12 +36,14 @@
+ 
+ def decode_passwdx(passwdx):
+     '''decode passwdx into plain format'''
+-    return base64.b64decode(passwdx).decode('bz2')
++    decoded_data = base64.b64decode(passwdx)
++    return bz2.decompress(decoded_data).decode('utf-8')
+ 
+ 
+ def encode_passwd(passwd):
+     '''encode passwd by bz2 and base64'''
+-    return base64.b64encode(passwd.encode('bz2'))
++    compressed_data = bz2.compress(passwd.encode('utf-8'))
++    return base64.b64encode(compressed_data)
+ 
+ 
+ class BrainConfigParser(SafeConfigParser):
+@@ -257,9 +260,9 @@
+     def _create_default_parser(self):
+         'create a default parser that handle DEFAULTS values'
+         parser = BrainConfigParser()
+-        for sec, options in self.DEFAULTS.iteritems():
++        for sec, options in self.DEFAULTS.items():
+             parser.add_section(sec)
+-            for key, val in options.iteritems():
++            for key, val in options.items():
+                 parser.set(sec, key, val)
+         return parser
+ 
+@@ -381,8 +384,7 @@
+             try:
+                 return cfgparser.get(section, opt)
+             except Error as err:
+-                pass
+-        raise errors.ConfigError(err)
++                raise errors.ConfigError(err)
+ 
+     def options(self, section='general'):
+         'merge and return options of certain section from multi-levels'
+@@ -599,7 +601,7 @@
+         except KeyError as err:
+             raise errors.ConfigError('unknown key: %s. Supportted '\
+                     'keys are %s' % (str(err), ' '.join( \
+-                    self.DEFAULTS['general'].keys())))
++                    list(self.DEFAULTS['general'].keys()))))
+         return value
+ 
+     def is_profile_oriented(self):
+@@ -766,7 +768,7 @@
+                     repos[key]['passwd'] = value
+                 else:
+                     repos[key][name] = value
+-        return sorted(repos.items(), key=lambda i: i[0])
++        return sorted(list(repos.items()), key=lambda i: i[0])
+ 
+     def _build_profile_by_subcommand(self):
+         '''return profile object from subcommand oriented style of config'''
+diff -uNr a/gitbuildsys/oscapi.py b/gitbuildsys/oscapi.py
+--- a/gitbuildsys/oscapi.py	2023-05-10 10:34:22.000000000 +0300
++++ b/gitbuildsys/oscapi.py	2023-08-23 16:50:31.372984028 +0300
+@@ -24,13 +24,14 @@
+ 
+ import os
+ import re
+-import urllib2
++import urllib.request, urllib.error, urllib.parse
+ import M2Crypto
+ from M2Crypto.SSL.Checker import SSLVerificationError
+ import ssl
+ 
+ from collections import defaultdict
+-from urllib import quote_plus, pathname2url
++from urllib.parse import quote_plus
++from urllib.request import pathname2url
+ 
+ from xml.etree import cElementTree as ET
+ 
+@@ -60,7 +61,7 @@
+                                    'for specified oscrc: %s' % oscrc)
+ 
+                 raise # else
+-            except urllib2.URLError:
++            except urllib.error.URLError:
+                 raise ObsError("invalid service apiurl: %s" % apiurl)
+         else:
+             conf.get_config()
+@@ -79,13 +80,13 @@
+         for count in (1, 2, 3):
+             try:
+                 return method(url, data=data, file=filep)
+-            except (urllib2.URLError, M2Crypto.m2urllib2.URLError,
++            except (urllib.error.URLError, M2Crypto.m2urllib2.URLError,
+                     M2Crypto.SSL.SSLError, ssl.SSLError) as err:
+                 if count == 3:
+                     raise OSCError(str(err))
+ 
+         raise OSCError('Got empty response from %s %s' % \
+-                       (method.func_name.split('_')[-1], url))
++                       (method.__name__.split('_')[-1], url))
+ 
+     def get_repos_of_project(self, project):
+         """Get dictionary name: list of archs for project repos"""
+@@ -161,7 +162,7 @@
+         try:
+             # Create project and set its meta
+             core.edit_meta('prj', path_args=quote_plus(target), data=meta)
+-        except (urllib2.URLError, M2Crypto.m2urllib2.URLError,
++        except (urllib.error.URLError, M2Crypto.m2urllib2.URLError,
+                 M2Crypto.SSL.SSLError) as err:
+             raise ObsError("Can't set meta for %s: %s" % (target, str(err)))
+ 
+@@ -172,7 +173,7 @@
+         # copy project config
+         try:
+             config = core.show_project_conf(self.apiurl, src)
+-        except (urllib2.URLError, M2Crypto.m2urllib2.URLError,
++        except (urllib.error.URLError, M2Crypto.m2urllib2.URLError,
+                 M2Crypto.SSL.SSLError) as err:
+             raise ObsError("Can't get config from project %s: %s" \
+                            % (src, str(err)))
+@@ -205,10 +206,10 @@
+         try:
+             core.meta_exists(metatype=metatype, path_args=path_args,
+                              create_new=False, apiurl=self.apiurl)
+-        except urllib2.HTTPError as err:
++        except urllib.error.HTTPError as err:
+             if err.code == 404:
+                 return False
+-        except (urllib2.URLError, M2Crypto.m2urllib2.URLError, \
++        except (urllib.error.URLError, M2Crypto.m2urllib2.URLError, \
+                 M2Crypto.SSL.SSLError) as err:
+             pass
+         except SSLVerificationError:
+@@ -222,7 +223,7 @@
+         """Rebuild package."""
+         try:
+             return core.rebuild(self.apiurl, prj, pkg, repo=None, arch=arch)
+-        except (urllib2.URLError, M2Crypto.m2urllib2.URLError, \
++        except (urllib.error.URLError, M2Crypto.m2urllib2.URLError, \
+                 M2Crypto.SSL.SSLError) as err:
+             raise ObsError("Can't trigger rebuild for %s/%s: %s" % \
+                            (prj, pkg, str(err)))
+@@ -269,7 +270,7 @@
+             else:
+                 new.append(lpath)
+ 
+-        return rdict.keys(), not_changed, changed, new
++        return list(rdict.keys()), not_changed, changed, new
+ 
+     @waiting
+     def commit_files(self, prj, pkg, files, message):
+@@ -318,7 +319,7 @@
+         results = defaultdict(dict)
+         try:
+             build_status = core.get_results(self.apiurl, prj, pkg)
+-        except (urllib2.URLError, M2Crypto.m2urllib2.URLError,
++        except (urllib.error.URLError, M2Crypto.m2urllib2.URLError,
+                 M2Crypto.SSL.SSLError) as err:
+             raise ObsError("can't get %s/%s build results: %s" \
+                            % (prj, pkg, str(err)))
+@@ -348,7 +349,7 @@
+             raise ObsError("can't get %s/%s build log: %s" % (prj, pkg, err))
+ 
+         return log.translate(None, "".join([chr(i) for i in \
+-                                            range(10) + range(11, 32)]))
++                                            list(range(10)) + list(range(11, 32))]))
+ 
+     @staticmethod
+     def get_path(prj, pkg=None):
+diff -uNr a/gitbuildsys/parsing.py b/gitbuildsys/parsing.py
+--- a/gitbuildsys/parsing.py	2023-05-10 10:34:22.000000000 +0300
++++ b/gitbuildsys/parsing.py	2023-08-23 16:50:31.388984027 +0300
+@@ -35,7 +35,7 @@
+         """Collect aliases."""
+ 
+         if action.choices:
+-            for item, parser in action.choices.iteritems():
++            for item, parser in action.choices.items():
+                 self._aliases[str(item)] = parser.get_default('alias')
+ 
+         return super(GbsHelpFormatter, self).add_argument(action)
+diff -uNr a/gitbuildsys/safe_url.py b/gitbuildsys/safe_url.py
+--- a/gitbuildsys/safe_url.py	2023-05-10 10:34:22.000000000 +0300
++++ b/gitbuildsys/safe_url.py	2023-08-23 16:50:31.468984026 +0300
+@@ -20,8 +20,8 @@
+ from config file, and hide plain user and password when it print to screen
+ """
+ 
+-import urllib
+-import urlparse
++import urllib.request, urllib.parse, urllib.error
++import urllib.parse
+ 
+ 
+ class SafeURL(str):
+@@ -38,7 +38,7 @@
+         inst.user, inst.passwd = SafeURL._check_userinfo(inline_user,
+                                                          inline_passwd,
+                                                          user, passwd)
+-        inst.components = urlparse.urlsplit(safe_url)
++        inst.components = urllib.parse.urlsplit(safe_url)
+         return inst
+ 
+     @property
+@@ -57,7 +57,7 @@
+ 
+         new_components = list(self.components)
+         new_components[1] = login
+-        return urlparse.urlunsplit(new_components)
++        return urllib.parse.urlunsplit(new_components)
+ 
+     def is_local(self):
+         'return True is it is local path'
+@@ -65,7 +65,7 @@
+ 
+     def pathjoin(self, args):
+         '''treat self as path and urljoin'''
+-        new = urlparse.urljoin(self.rstrip('/') + '/', args)
++        new = urllib.parse.urljoin(self.rstrip('/') + '/', args)
+         return SafeURL(new, self.user, self.passwd)
+ 
+     def _get_userinfo(self):
+@@ -73,19 +73,19 @@
+         if not self.user:
+             return ''
+ 
+-        escape = lambda raw: urllib.quote(raw, safe='')
++        escape = lambda raw: urllib.parse.quote(raw, safe='')
+         return '%s:%s' % (escape(self.user), escape(self.passwd)) \
+             if self.passwd else escape(self.user)
+ 
+     @staticmethod
+     def _extract_userinfo(url):
+         '''strip inline user/password from url'''
+-        results = urlparse.urlsplit(url)
++        results = urllib.parse.urlsplit(url)
+         hostport = SafeURL._get_hostport(results)
+ 
+         components = list(results)
+         components[1] = hostport
+-        safe_url = urlparse.urlunsplit(components)
++        safe_url = urllib.parse.urlunsplit(components)
+ 
+         return safe_url, results.username, results.password
+ 
+diff -uNr a/gitbuildsys/utils.py b/gitbuildsys/utils.py
+--- a/gitbuildsys/utils.py	2023-05-10 10:34:22.000000000 +0300
++++ b/gitbuildsys/utils.py	2023-08-23 18:14:25.767913935 +0300
+@@ -75,7 +75,7 @@
+         cmd = ['git', 'show', git_object]
+         try:
+             with Workdir(git_path):
+-                outp = subprocess.Popen(cmd, stdout=subprocess.PIPE)
++                outp = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
+         except (subprocess.CalledProcessError, OSError):
+             raise GbsError("failed to run %s in %s" % (' '.join(cmd), git_path))
+         output = outp.communicate()[0]
+@@ -145,7 +145,7 @@
+                 os.close(fds)
+                 if content:
+                     #python3 will not support file, use open
+-                    with open(path, 'w+') as fobj:
++                    with open(path, 'wb+') as fobj:
+                         fobj.write(content)
+         except OSError as err:
+             raise GbsError("Failed to create dir or file on %s: %s" % \
+@@ -171,7 +171,7 @@
+         os.close(tmpffd)
+ 
+         if content:
+-            with open(self.name, 'w') as fobj:
++            with open(self.name, 'wb') as fobj:
+                 fobj.write(content)
+ 
+         self.stat = os.stat(self.name)
+@@ -237,8 +237,13 @@
+             if not catch SIGINT, pycurl will print traceback'''
+             stop[0] = True
+ 
++        def test(debug_type, debug_msg):
++            print("debug(%d): %s" % (debug_type, debug_msg))
++    
+         curl.setopt(pycurl.PROGRESSFUNCTION, progressing)
+         curl.setopt(pycurl.NOPROGRESS, False)
++        # curl.setopt(pycurl.VERBOSE, 1)
++        # curl.setopt(pycurl.DEBUGFUNCTION, test)
+         original_handler = signal.signal(signal.SIGINT, handler)
+         try:
+             curl.perform()
+@@ -280,7 +285,7 @@
+ 
+         log.debug("fetching %s => %s" % (url, filename))
+ 
+-        with open(filename, 'w') as outfile:
++        with open(filename, 'wb') as outfile:
+             self.change_url(url, outfile, user, passwd, no_cache)
+             self.perform()
+ 
+@@ -440,7 +445,7 @@
+                     fh_gz = open(fname, 'r')
+                 buildconf_file = os.path.join(os.path.dirname(fname),
+                                               'build.conf')
+-                buildconf_fh = open(buildconf_file, 'w')
++                buildconf_fh = open(buildconf_file, 'wb')
+                 buildconf_fh.write(fh_gz.read())
+                 fh_gz.close()
+                 buildconf_fh.close()
+@@ -554,7 +559,7 @@
+             cmd = ['git', 'clone', self._giturl, workdir]
+         try:
+             with Workdir(workdir):
+-                output = subprocess.Popen(cmd, stdout=subprocess.PIPE)
++                output = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
+                 output.wait()
+         except (subprocess.CalledProcessError, OSError):
+             raise GbsError("failed to run %s in %s" % (' '.join(cmd), workdir))
+@@ -623,7 +628,7 @@
+ 
+         lst_node = root.getiterator("package")
+         for node in lst_node:
+-            if node.attrib.has_key("name"):
++            if "name" in node.attrib:
+                 for child in node.getchildren():
+                     if child.tag == 'source':
+                         self._pkg2src[node.attrib['name']] = child.text
+@@ -723,19 +728,19 @@
+     if not is_clean and not opts.include_all:
+         if untracked_files:
+             log.warning('the following untracked files would NOT be '
+-                        'included:\n   %s' % '\n   '.join(untracked_files))
++                        'included:\n   %s' % '\n   '.join(map(str, untracked_files)))
+         if uncommitted_files:
+             log.warning('the following uncommitted changes would NOT be '
+-                        'included:\n   %s' % '\n   '.join(uncommitted_files))
++                        'included:\n   %s' % '\n   '.join(map(str, uncommitted_files)))
+         log.warning('you can specify \'--include-all\' option to '
+                     'include these uncommitted and untracked files.')
+     if not is_clean and opts.include_all:
+         if untracked_files:
+             log.info('the following untracked files would be included'
+-                     ':\n   %s' % '\n   '.join(untracked_files))
++                     ':\n   %s' % '\n   '.join(map(str, untracked_files)))
+         if uncommitted_files:
+             log.info('the following uncommitted changes would be included'
+-                     ':\n   %s' % '\n   '.join(uncommitted_files))
++                     ':\n   %s' % '\n   '.join(map(str, uncommitted_files)))
+ 
+ def hexdigest(fhandle, block_size=4096):
+     """Calculate hexdigest of file content."""
+@@ -754,7 +759,7 @@
+     try:
+         with Workdir(git_path):
+             return  subprocess.Popen(args,
+-                                     stdout=subprocess.PIPE).communicate()[0]
++                                     stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+     except (subprocess.CalledProcessError, OSError) as err:
+         log.debug('failed to checkout %s from %s:%s' % (relative_path,
+                                                         commit_id, str(err)))
+@@ -772,7 +777,7 @@
+     try:
+         with Workdir(git_path):
+             output = subprocess.Popen(args,
+-                                      stdout=subprocess.PIPE).communicate()[0]
++                                      stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+     except (subprocess.CalledProcessError, OSError) as err:
+         raise GbsError('failed to check existence of %s in %s:%s' % (
+             relative_path, commit_id, str(err)))
+@@ -799,7 +804,7 @@
+     try:
+         with Workdir(git_path):
+             output = subprocess.Popen(args,
+-                                      stdout=subprocess.PIPE).communicate()[0]
++                                      stdout=subprocess.PIPE, universal_newlines=True).communicate()[0]
+     except (subprocess.CalledProcessError, OSError) as err:
+         raise GbsError('failed to glob %s in %s:%s' % (
+             pattern, commit_id, str(err)))
+@@ -840,7 +845,7 @@
+         return False
+ 
+     try:
+-        with open(target_fname, 'w') as fobj:
++        with open(target_fname, 'wb') as fobj:
+             fobj.write(changes)
+     except IOError as err:
+         raise GbsError("Can't update %s: %s" % (target_fname, str(err)))
+diff -uNr a/tools/gbs b/tools/gbs
+--- a/tools/gbs	2023-05-10 10:34:22.000000000 +0300
++++ b/tools/gbs	2023-08-23 16:54:22.464980810 +0300
+@@ -704,7 +704,7 @@
+ 
+     # collect aliases
+     aliases = {}
+-    for name, obj in globals().iteritems():
++    for name, obj in list(globals().items()):
+         if name.endswith('_parser') and callable(obj):
+             aliases[obj(subparsers).get_default('alias')] = name.split('_')[0]
+ 
