@@ -1,0 +1,34 @@
+--- a/Makefile	2023-09-21 19:06:16.715836693 +0300
++++ b/Makefile	2023-09-21 19:17:12.931800533 +0300
+@@ -14,14 +14,15 @@
+ # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ 
+ CC ?= gcc
+-PREFIX ?= /usr/local
++PREFIX ?= /usr
+ SDL_CFLAGS := $(shell pkg-config --cflags sdl 2>&1)
+ SDL_LIBS = $(shell pkg-config --libs sdl)
++LIBDIR ?= lib
+ 
+ LIB_VERSION = 1.2
+ 
+ CFLAGS ?= -O3 -Wall -fPIC
+-QUIRC_CFLAGS = -Ilib $(CFLAGS) $(SDL_CFLAGS)
++QUIRC_CFLAGS = -Ilib $(CFLAGS) $(SDL_CFLAGS)  -Wl,-soname,quirc.so.1.2
+ LIB_OBJ = \
+     lib/decode.o \
+     lib/identify.o \
+@@ -86,10 +87,11 @@
+ 	$(CXX) $(QUIRC_CXXFLAGS) -o $@ -c $<
+ 
+ install: libquirc.a libquirc.so.$(LIB_VERSION) quirc-demo quirc-scanner
++	mkdir -p $(DESTDIR)$(PREFIX)/{include,bin,$(LIBDIR)}
+ 	install -o root -g root -m 0644 lib/quirc.h $(DESTDIR)$(PREFIX)/include
+-	install -o root -g root -m 0644 libquirc.a $(DESTDIR)$(PREFIX)/lib
++	install -o root -g root -m 0644 libquirc.a $(DESTDIR)$(PREFIX)/$(LIBDIR)
+ 	install -o root -g root -m 0755 libquirc.so.$(LIB_VERSION) \
+-		$(DESTDIR)$(PREFIX)/lib
++		$(DESTDIR)$(PREFIX)/$(LIBDIR)
+ 	install -o root -g root -m 0755 quirc-demo $(DESTDIR)$(PREFIX)/bin
+ 	# install -o root -g root -m 0755 quirc-demo-opencv $(DESTDIR)$(PREFIX)/bin
+ 	install -o root -g root -m 0755 quirc-scanner $(DESTDIR)$(PREFIX)/bin
