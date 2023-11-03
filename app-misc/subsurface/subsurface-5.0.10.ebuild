@@ -4,7 +4,7 @@
 
 EAPI=7
 
-inherit cmake eutils
+inherit cmake
 
 DESCRIPTION="Subsurface is an open source divelog program for recreational, tech, and free-divers that runs on Windows, Mac and Linux"
 HOMEPAGE="https://github.com/${PN}/${PN}"
@@ -28,7 +28,9 @@ dev-libs/libzip
 dev-libs/libxslt
 dev-db/sqlite:3
 dev-libs/libgit2
-=dev-libs/libdivecomputer-subsurface-${PV}"
+=dev-libs/libdivecomputer-subsurface-${PV}
+dev-qt/googlemaps
+"
 RDEPEND="${DEPEND}"
 
 CMAKE_MAKEFILE_GENERATOR="emake"
