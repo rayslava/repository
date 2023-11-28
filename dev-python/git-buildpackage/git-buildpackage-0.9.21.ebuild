@@ -4,7 +4,7 @@
 EAPI=7
 PYTHON_COMPAT=( python3_{7..11} )
 
-inherit eutils distutils-r1
+inherit distutils-r1
 
 MY_PATCH_HASH="tizen20210514"
 DESCRIPTION="Git buildpackage python library"

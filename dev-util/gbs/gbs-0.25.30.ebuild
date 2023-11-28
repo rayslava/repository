@@ -3,7 +3,7 @@
 
 EAPI=7
 PYTHON_COMPAT=( python3_{7..11} )
-inherit eutils distutils-r1
+inherit distutils-r1
 
 DESCRIPTION="Git Build System"
 HOMEPAGE="http://developer.tizen.org"
