@@ -1,23 +1,14 @@
-# Copyright 1999-2018 Gentoo Foundation
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
-EAPI=6
+EAPI=8
+
+inherit cmake-multilib
 
 DESCRIPTION="A high-performance MongoDB driver for C"
-HOMEPAGE="https://github.com/mongodb/mongo-c-driver"
-GH_USER="mongodb"
-GH_REPO="${PN}"
++HOMEPAGE="https://github.com/mongodb/${PN}"
++SRC_URI="https://github.com/mongodb/${PN}/archive/v${PV}.tar.gz -> ${P}.tar.gz"
 RESTRICT="primaryuri"
-
-if [[ ${PV} != "9999" ]]; then
-	GH_TAG="${PV}"
-	KEYWORDS="~amd64"
-else
-	GH_BUILD_TYPE="live"
-	KEYWORDS=""
-fi
-
-inherit cmake-multilib eutils github
 
 LICENSE="BSD"
 SLOT="0"
