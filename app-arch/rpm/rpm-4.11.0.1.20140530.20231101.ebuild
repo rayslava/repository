@@ -17,7 +17,7 @@ RESTRICT="primaryuri"
 LICENSE="GPL-2"
 SLOT="tizen"
 KEYWORDS="~amd64"
-IUSE="+python"
+IUSE="+python +lua +msm"
 
 DEPEND="app-admin/smack
 		sys-libs/db:4.8
