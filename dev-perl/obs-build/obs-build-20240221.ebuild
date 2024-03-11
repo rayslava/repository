@@ -3,6 +3,8 @@
 
 EAPI=8
 
+inherit perl-functions
+
 EGIT_REPO_URI="https://github.com/openSUSE/${PN}.git"
 
 if [[ ${PV} == *9999 ]]; then
@@ -31,12 +33,11 @@ RDEPEND="
 	!dev-util/suse-build
 "
 
-S="${WORKDIR}/${P/suse/obs}"
-
-src_compile() { :; }
-
 src_install() {
 	emake DESTDIR="${ED}" pkglibdir=/usr/libexec/obs-build install
+	perl_domodule -r Build
+	perl_domodule Build.pm
+
 	cd "${ED}"/usr
 	find bin -type l | while read i; do
 		mv "${i}" "${i/bin\//bin/obs-}"

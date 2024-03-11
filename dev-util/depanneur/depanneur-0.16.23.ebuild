@@ -15,16 +15,18 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
 
-DEPEND="dev-util/obs-build
+DEPEND="dev-perl/obs-build
 		dev-perl/HTML-Template
 		dev-perl/YAML
 		dev-perl/JSON
+		dev-perl/Config-Tiny
+		dev-perl/Parallel-ForkManager
+		dev-perl/XML-Parser
 		dev-lang/perl[ithreads]"
 RDEPEND="${DEPEND}"
 
 RESTRICT="mirror"
 
-src_prepare () {
-	default
-	sed -e "/DESTDIR=/s#\$#${ED}#" -i Makefile || die
+src_install () {
+	emake DESTDIR="${ED}" install
 }
