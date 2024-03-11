@@ -18,7 +18,7 @@ KEYWORDS="~amd64"
 IUSE=""
 
 DEPEND="app-admin/smack
-		sys-libs/db
+		sys-libs/db:4.8
 		dev-libs/nspr
 		dev-libs/nss
 		dev-libs/libxml2
@@ -39,6 +39,7 @@ src_unpack () {
 }
 
 src_prepare () {
+	default
 	export NSPR=`pkg-config --cflags nspr`
 	export NSS=`pkg-config --cflags nss`
 	export CFLAGS="${NSPR} ${NSS} -ffunction-sections"
@@ -48,7 +49,7 @@ src_prepare () {
 	rm -f m4/libtool.m4
 	rm -f m4/lt*.m4
 	ln -s db3 db
-	./autogen.sh
+	./autogen.sh || true
 }
 
 src_configure () {
