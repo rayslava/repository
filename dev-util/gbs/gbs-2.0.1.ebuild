@@ -19,6 +19,7 @@ RESTRICT="mirror"
 DEPEND="|| ( app-arch/rpm[python] app-arch/librpm-tizen )
 		dev-util/depanneur
 		dev-perl/Crypt-SSLeay
+		dev-perl/pristine-tar
 		app-emulation/qemu[static-user]
 		dev-python/git-buildpackage:tizen[${PYTHON_USEDEP}]
 		dev-python/pyyaml
