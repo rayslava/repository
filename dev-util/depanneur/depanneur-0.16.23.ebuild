@@ -22,10 +22,16 @@ DEPEND="dev-perl/obs-build
 		dev-perl/Config-Tiny
 		dev-perl/Parallel-ForkManager
 		dev-perl/XML-Parser
+		dev-perl/BSSolv
 		dev-lang/perl[ithreads]"
 RDEPEND="${DEPEND}"
 
 RESTRICT="mirror"
+
+src_prepare () {
+	default
+	sed -e 's#/usr/lib/build#/usr/libexec/obs-build#' -i depanneur || die
+}
 
 src_install () {
 	emake DESTDIR="${ED}" install
