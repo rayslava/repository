@@ -16,7 +16,7 @@ KEYWORDS="~amd64"
 IUSE=""
 RESTRICT="mirror"
 
-DEPEND="app-arch/rpm[python]:tizen
+DEPEND="app-arch/rpm:tizen[python]
 		app-arch/createrepo_c
 		dev-util/depanneur
 		dev-perl/Crypt-SSLeay
