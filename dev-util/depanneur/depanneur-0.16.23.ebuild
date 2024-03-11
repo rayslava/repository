@@ -31,6 +31,7 @@ RESTRICT="mirror"
 src_prepare () {
 	default
 	sed -e 's#/usr/lib/build#/usr/libexec/obs-build#' -i depanneur || die
+	sed -e 's#/usr/bin/build#/usr/libexec/obs-build/build#' -i depanneur || die
 }
 
 src_install () {
