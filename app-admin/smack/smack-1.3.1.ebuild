@@ -1,10 +1,10 @@
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=5
+EAPI=8
 
-inherit autotools-utils
+inherit autotools
 
 DESCRIPTION="Simplified Mandatory Access Control Kernel userspace utilities"
 HOMEPAGE="http://schaufler-ca.com/"
@@ -20,3 +20,7 @@ RDEPEND="${DEPEND}"
 AUTOTOOLS_AUTORECONF="yes"
 AUTOTOOLS_IN_SOURCE_BUILD="yes"
 
+src_prepare() {
+	default
+	./autogen.sh || die
+}
