@@ -1,4 +1,4 @@
-# Copyright 2020-2023 Gentoo Authors
+# Copyright 2020-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
@@ -24,7 +24,7 @@ IUSE=""
 
 DEPEND="
 	dev-python/urllib3[${PYTHON_USEDEP}]
-	app-arch/rpm[python]
+	|| ( app-arch/rpm[python] app-arch/librpm_tizen )
 	dev-python/m2crypto[${PYTHON_USEDEP}]
 	${PYTHON_DEPS}
 "
