@@ -33,6 +33,11 @@ RDEPEND="
 	!dev-util/suse-build
 "
 
+src_prepare () {
+	default
+	sed -e '/echo "%__dbi_other/d' -i build-pkg-rpm
+}
+
 src_install() {
 	emake DESTDIR="${ED}" pkglibdir=/usr/libexec/obs-build install
 	perl_domodule -r Build

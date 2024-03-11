@@ -17,6 +17,7 @@ IUSE=""
 RESTRICT="mirror"
 
 DEPEND="app-arch/rpm[python]:tizen
+		app-arch/createrepo_c
 		dev-util/depanneur
 		dev-perl/Crypt-SSLeay
 		dev-perl/pristine-tar
