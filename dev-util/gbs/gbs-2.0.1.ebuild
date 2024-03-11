@@ -16,7 +16,7 @@ KEYWORDS="~amd64"
 IUSE=""
 RESTRICT="mirror"
 
-DEPEND="|| ( app-arch/rpm[python] app-arch/librpm-tizen )
+DEPEND="app-arch/rpm[python]:tizen
 		dev-util/depanneur
 		dev-perl/Crypt-SSLeay
 		dev-perl/pristine-tar

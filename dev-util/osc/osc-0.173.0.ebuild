@@ -24,7 +24,7 @@ IUSE=""
 
 DEPEND="
 	dev-python/urllib3[${PYTHON_USEDEP}]
-	|| ( app-arch/rpm[python] app-arch/librpm-tizen )
+	app-arch/rpm[python]:tizen
 	dev-python/m2crypto[${PYTHON_USEDEP}]
 	${PYTHON_DEPS}
 "

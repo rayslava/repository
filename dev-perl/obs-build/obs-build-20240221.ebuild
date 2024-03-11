@@ -29,7 +29,7 @@ RDEPEND="
 	dev-perl/TimeDate
 	app-shells/bash
 	app-arch/cpio
-	|| ( app-arch/rpm app-arch/librpm-tizen )
+	app-arch/rpm
 	!dev-util/suse-build
 "
 

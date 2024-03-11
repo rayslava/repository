@@ -2,20 +2,22 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
+
 inherit autotools libtool
 
+MY_PN="librpm-tizen"
 MAJOR_PV="$(ver_cut 1-4)"
 TIZEN_ORIG_PV="$(ver_cut 5)"
 TIZEN_UPDATE_PV="$(ver_cut 6)"
 DESCRIPTION="RPM patched for GBS"
 HOMEPAGE="http://developer.tizen.org"
-SRC_URI="https://download.tizen.org/tools/latest-release/Ubuntu_22.04/${PN}_${MAJOR_PV}.tizen${TIZEN_ORIG_PV}.orig.tar.gz
-https://download.tizen.org/tools/latest-release/Ubuntu_22.04/${PN}_${MAJOR_PV}.tizen${TIZEN_ORIG_PV}-tizen${TIZEN_UPDATE_PV}.diff.gz"
+SRC_URI="https://download.tizen.org/tools/latest-release/Ubuntu_22.04/${MY_PN}_${MAJOR_PV}.tizen${TIZEN_ORIG_PV}.orig.tar.gz
+https://download.tizen.org/tools/latest-release/Ubuntu_22.04/${MY_PN}_${MAJOR_PV}.tizen${TIZEN_ORIG_PV}-tizen${TIZEN_UPDATE_PV}.diff.gz"
 RESTRICT="primaryuri"
 LICENSE="GPL-2"
-SLOT="0"
+SLOT="tizen"
 KEYWORDS="~amd64"
-IUSE=""
+IUSE="+python"
 
 DEPEND="app-admin/smack
 		sys-libs/db:4.8
@@ -24,17 +26,16 @@ DEPEND="app-admin/smack
 		dev-libs/libxml2
 		>=dev-lang/lua-5.1
 		dev-lang/python
-		dev-libs/uthash
-		!app-arch/rpm"
+		dev-libs/uthash"
 RDEPEND="${DEPEND}"
 
-S="${WORKDIR}/${PN}-${MAJOR_PV}.tizen${TIZEN_ORIG_PV}"
+S="${WORKDIR}/${MY_PN}-${MAJOR_PV}.tizen${TIZEN_ORIG_PV}"
 
 src_unpack () {
-	unpack ${PN}_${MAJOR_PV}.tizen${TIZEN_ORIG_PV}.orig.tar.gz
-	unpack ${PN}_${MAJOR_PV}.tizen${TIZEN_ORIG_PV}-tizen${TIZEN_UPDATE_PV}.diff.gz
+	unpack ${MY_PN}_${MAJOR_PV}.tizen${TIZEN_ORIG_PV}.orig.tar.gz
+	unpack ${MY_PN}_${MAJOR_PV}.tizen${TIZEN_ORIG_PV}-tizen${TIZEN_UPDATE_PV}.diff.gz
 	pushd ${S}
-	eapply -p1 ${WORKDIR}/${PN}_${MAJOR_PV}.tizen${TIZEN_ORIG_PV}-tizen${TIZEN_UPDATE_PV}.diff
+	eapply -p1 ${WORKDIR}/${MY_PN}_${MAJOR_PV}.tizen${TIZEN_ORIG_PV}-tizen${TIZEN_UPDATE_PV}.diff
 	popd
 }
 
