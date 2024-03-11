@@ -24,5 +24,5 @@ DEPEND="app-arch/rpm:tizen[python]
 		app-emulation/qemu[static-user]
 		dev-python/git-buildpackage:tizen[${PYTHON_USEDEP}]
 		dev-python/pyyaml
-		dev-util/obs-build"
+		dev-perl/obs-build"
 RDEPEND="${DEPEND}"
