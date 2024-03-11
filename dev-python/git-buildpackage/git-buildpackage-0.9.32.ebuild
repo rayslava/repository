@@ -1,10 +1,10 @@
-# Copyright 1999-2023 Gentoo Authors
+# Copyright 1999-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=7
 PYTHON_COMPAT=( python3_{7..11} )
 
-inherit eutils distutils-r1
+inherit distutils-r1
 
 MY_PN="${PN}-debian"
 MY_P="${MY_PN}-${PV}"
@@ -28,9 +28,9 @@ RDEPEND="${DEPEND}"
 S="${WORKDIR}/${MY_P}"
 
 python_compile() {
-    WITHOUT_NOSETESTS=1 distutils-r1_python_compile
+	WITHOUT_NOSETESTS=1 distutils-r1_python_compile
 }
 
 python_install() {
-    WITHOUT_NOSETESTS=1 distutils-r1_python_install
+	WITHOUT_NOSETESTS=1 distutils-r1_python_install
 }
