@@ -6,7 +6,7 @@ PYTHON_COMPAT=( python3_{10,11,12} )
 
 inherit distutils-r1
 
-DESCRIPTION="A simple wrapper script for the Borg backup software that creates and prunes backups"
+DESCRIPTION="The usual way of creating PDF from reStructuredText is by going through LaTeX. This tool provides an alternative by producing PDF directly using the ReportLab library."
 HOMEPAGE="https://github.com/rst2pdf/rst2pdf"
 SRC_URI="mirror://pypi/${P:0:1}/${PN}/${P}.tar.gz -> python-${P}.tar.gz"
 RESTRICT="primaryuri"
