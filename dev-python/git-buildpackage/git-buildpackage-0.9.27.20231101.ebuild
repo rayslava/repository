@@ -2,7 +2,7 @@
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
-PYTHON_COMPAT=( pypy3 python3_{9..12} )
+PYTHON_COMPAT=( python3_{9..12} )
 
 inherit distutils-r1
 
@@ -23,7 +23,7 @@ RESTRICT="mirror"
 DEPEND="dev-util/osc
 dev-python/setuptools[${PYTHON_USEDEP}]
 dev-python/coverage[${PYTHON_USEDEP}]
-dev-python/nose[${PYTHON_USEDEP}]"
+dev-python/nose2[${PYTHON_USEDEP}]"
 RDEPEND="${DEPEND}"
 
 S="${WORKDIR}/${PN}-${MAJOR_PV}"
