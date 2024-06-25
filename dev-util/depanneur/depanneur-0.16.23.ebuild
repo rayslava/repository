@@ -23,7 +23,7 @@ DEPEND="dev-perl/obs-build
 		dev-perl/Parallel-ForkManager
 		dev-perl/XML-Parser
 		dev-perl/BSSolv
-		dev-lang/perl[ithreads]"
+		dev-lang/perl"
 RDEPEND="${DEPEND}"
 
 RESTRICT="mirror"
