@@ -457,6 +457,8 @@ HOMEPAGE="https://github.com/launchbadge/sqlx"
 SRC_URI="https://github.com/launchbadge/sqlx/archive/refs/tags/v${PV}.tar.gz -> ${P}.tar.gz $(cargo_crate_uris ${CRATES})"
 RESTRICT="mirror"
 
+S="${WORKDIR}/sqlx-${PV}/${PN}"
+
 # License set may be more restrictive as OR is not respected
 # use cargo-license for a more accurate license picture
 LICENSE="0BSD Apache-2.0 Apache-2.0-with-LLVM-exceptions BSD BSD-2 Boost-1.0 CC0-1.0 ISC MIT MIT-0 MPL-2.0 Unicode-DFS-2016 Unlicense ZLIB openssl"
