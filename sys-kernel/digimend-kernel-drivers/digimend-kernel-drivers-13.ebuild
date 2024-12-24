@@ -1,4 +1,4 @@
-# Copyright 2020-2023 Gentoo Authors
+# Copyright 2020-2024 Gentoo Authors
 # Distributed under the terms of the GNU General Public License v2
 
 EAPI=8
@@ -15,11 +15,6 @@ SLOT="0"
 BUILD_TARGETS="clean modules"
 BUILD_PARAMS="-C ${KERNEL_DIR} M=${S}"
 MODULE_NAMES="hid-kye(misc:${S}) hid-uclogic(misc:${S}) hid-polostar(misc:${S}) hid-viewsonic(misc:${S})"
-
-src_prepare() {
-	default
-	eapply -p1 "${FILESDIR}"/linux-6.3.patch
-}
 
 src_install() {
 	linux-mod_src_install
