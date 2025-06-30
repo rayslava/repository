@@ -3,6 +3,7 @@
 
 EAPI=8
 PYTHON_COMPAT=( python3_{11,12,13} )
+DISTUTILS_USE_PEP517=no
 
 inherit distutils-r1
 
