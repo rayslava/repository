@@ -1,0 +1,11 @@
+--- a/core/format.cpp	2025-08-17 12:09:18.788519624 +0900
++++ b/core/format.cpp	2025-08-17 12:09:14.686692655 +0900
+@@ -258,7 +258,7 @@
+ 				break;
+ 			case LM_CHAR:
+ 				// char is promoted to int when passed through '...'
+-				ret += fmt_int(static_cast<char>(va_arg(ap, int)), flags, field_width, precision, base);
++			        ret += fmt_int(static_cast<short>(static_cast<char>(va_arg(ap, int))), flags, field_width, precision, base);
+ 				break;
+ 			case LM_SHORT:
+ 				// short is promoted to int when passed through '...'
