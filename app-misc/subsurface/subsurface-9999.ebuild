@@ -28,6 +28,7 @@ KEYWORDS="amd64"
 IUSE=""
 DEPEND="dev-qt/qtpositioning:6
 dev-qt/qtwebengine:6
+dev-qt/qtconnectivity:6[bluetooth]
 dev-libs/libxml2
 dev-libs/libzip
 dev-libs/libxslt
